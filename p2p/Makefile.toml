@@ -1,0 +1,6 @@
+[tasks.server]
+description = "Start Server"
+script = ['''
+#!/usr/bin/env bash
+cd server && cargo run
+''']

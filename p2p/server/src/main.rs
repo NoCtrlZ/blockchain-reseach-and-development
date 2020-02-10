@@ -5,5 +5,6 @@ pub fn main() {
     let listener = TcpListener::bind(&endpoint).unwrap();
     for stream in listener.incoming() {
         println!("Server is listening on {}", endpoint);
+        println!("{:?}", stream);
     }
 }
