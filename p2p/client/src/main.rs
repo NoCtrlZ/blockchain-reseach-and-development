@@ -1,3 +1,6 @@
+use std::net::TcpStream;
+
 fn main() {
-    println!("Hello, world!");
+    let endpoint = "127.0.0.1:9000";
+    let stream = TcpStream::connect(endpoint);
 }

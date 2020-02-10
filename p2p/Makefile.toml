@@ -4,3 +4,10 @@ script = ['''
 #!/usr/bin/env bash
 cd server && cargo run
 ''']
+
+[tasks.client]
+description = "Start Client"
+script = ['''
+#!/usr/bin/env bash
+cd client && cargo run
+''']
