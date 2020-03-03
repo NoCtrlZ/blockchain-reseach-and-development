@@ -1,9 +1,11 @@
 use crate::unit;
 
+#[derive(Debug)]
 pub struct Blockchain {
     pub entity: Vec<Block>
 }
 
+#[derive(Debug)]
 pub struct Block {
     index: u32,
     timestamp: u64,
@@ -13,6 +15,7 @@ pub struct Block {
     previous_hash: String
 }
 
+#[derive(Debug)]
 pub struct Transaction {
     id: u64,
     amount: u64,
@@ -41,23 +44,18 @@ impl Blockchain {
         self.entity.push(block);
     }
 
-    // fn latest_block(&self) -> Block {
-    //     self.entity[self.entity.len() - 1]
-    // }
+    fn latest_block(&mut self) -> &mut Block {
+        self.entity.last_mut().unwrap()
+    }
 
     pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
-        let mut block = &mut self.entity[&mut self.entity.len() - 1];
+        let mut block = self.latest_block();
         block.send_transaction(amount, sender, recipient)
     }
 
     pub fn print_latest_block(&self) {
-        let block = &self.entity[self.entity.len() - 1];
-        println!("index: {:?}", block.index);
-        println!("timestamp: {:?}", block.timestamp);
-        println!("transaction length: {:?}", block.transactions.len());
-        println!("nonce: {:?}", block.nonce);
-        println!("hash: {:?}", block.hash);
-        println!("previous hash: {:?}", block.previous_hash);
+        let block = self.entity.last().unwrap();
+        println!("index: {:?}", block);
     }
 
     // pub fn create_new_block(self) {
