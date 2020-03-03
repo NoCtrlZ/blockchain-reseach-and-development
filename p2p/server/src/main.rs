@@ -1,20 +1,28 @@
-use std::io::Read;
-use std::net::{TcpListener, TcpStream};
+use std::convert::Infallible;
+use std::net::SocketAddr;
+use hyper::{Body, Request, Response, Server};
+use hyper::service::{make_service_fn, service_fn};
 
-fn read_stream(stream: &mut TcpStream) -> String {
-    let mut buffer = [0; 512];
-    stream.read(&mut buffer).unwrap();
-    String::from_utf8_lossy(&buffer[..])
-        .trim_matches(char::from(0))
-        .to_string()
+async fn hello_world(_req: Request<Body>) -> Result<Response<Body>, Infallible> {
+    Ok(Response::new("Hello, World".into()))
 }
 
-pub fn main() {
-    let endpoint = "127.0.0.1:9000";
-    let listener = TcpListener::bind(&endpoint).unwrap();
-    for stream in listener.incoming() {
-        println!("Server is listening on {}", endpoint);
-        let message = read_stream(&mut stream.unwrap());
-        println!("{:?}", message);
+#[tokio::main]
+async fn main() {
+    // We'll bind to 127.0.0.1:3000
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    // A `Service` is needed for every connection, so this
+    // creates one from our `hello_world` function.
+    let make_svc = make_service_fn(|_conn| async {
+        // service_fn converts our function into a `Service`
+        Ok::<_, Infallible>(service_fn(hello_world))
+    });
+
+    let server = Server::bind(&addr).serve(make_svc);
+
+    // Run this server for... forever!
+    if let Err(e) = server.await {
+        eprintln!("server error: {}", e);
     }
 }
