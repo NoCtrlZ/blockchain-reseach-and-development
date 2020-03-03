@@ -16,7 +16,7 @@ pub struct Block {
     previous_hash: String
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Transaction {
     id: u64,
     amount: u64,
@@ -30,28 +30,8 @@ impl Blockchain {
             entity: Vec::new(),
             transactions: Vec::new()
         };
-        blockchain.create_genesis_block();
+        blockchain.create_new_block(0, "genesis block", "this is start");
         blockchain
-    }
-
-    pub fn create_genesis_block(&mut self) {
-        let block = Block {
-            index: 0,
-            timestamp: unit::current_time(),
-            transactions: Vec::new(),
-            nonce: 0,
-            hash: "genesis block".to_string(),
-            previous_hash: "this is start".to_string()
-        };
-        self.entity.push(block);
-        let first_block = Block {
-            index: *&self.entity.len() as u32 + 1,
-            timestamp: unit::current_time(),
-            transactions: Vec::new(),
-            nonce: 0,
-            hash: "genesis block".to_string(),
-            previous_hash: "this is start".to_string()
-        };
     }
 
     fn latest_block(&mut self) -> &mut Block {
@@ -79,20 +59,24 @@ impl Blockchain {
         println!("index: {:?}", self);
     }
 
-    // pub fn create_new_block(self) {
-    //     let previous_hash = &self.entity[self.entity.len() - 1].hash;
-    //     let current_hash = unit::block_hash(&self.entity[self.entity.len()]);
-
-    // }
+    pub fn create_new_block(&mut self, nonce: u64, hash: &str, previous_hash: &str) {
+        let block = Block {
+            index: *&self.entity.len() as u32,
+            timestamp: unit::current_time(),
+            transactions: self.transactions.clone(),
+            nonce: nonce,
+            hash: hash.to_string(),
+            previous_hash: previous_hash.to_string()
+        };
+        self.entity.push(block);
+        self.transactions.clear();
+    }
 }
 
 impl Block {
     fn print_latest_transaction(self) {
-        let transaction = &self.transactions[self.transactions.len() - 1];
-        println!("id: {:?}", transaction.id);
-        println!("amount: {:?}", transaction.amount);
-        println!("sender: {:?}", transaction.sender);
-        println!("recipient: {:?}", transaction.recipient);
+        let transaction = &self.transactions.last().unwrap();
+        println!("id: {:?}", transaction);
     }
 }
 
