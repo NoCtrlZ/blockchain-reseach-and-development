@@ -52,11 +52,11 @@ impl Blockchain {
 
     pub fn print_latest_block(&self) {
         let block = self.entity.last().unwrap();
-        println!("index: {:?}", block);
+        println!("block: {:?}", block);
     }
 
     pub fn print_blockchain(&self) {
-        println!("index: {:?}", self);
+        println!("blockchain: {:?}", self);
     }
 
     pub fn create_new_block(&mut self, nonce: u64, hash: &str, previous_hash: &str) {
@@ -76,7 +76,7 @@ impl Blockchain {
 impl Block {
     fn print_latest_transaction(self) {
         let transaction = &self.transactions.last().unwrap();
-        println!("id: {:?}", transaction);
+        println!("transactions: {:?}", transaction);
     }
 }
 

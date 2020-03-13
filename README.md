@@ -3,7 +3,12 @@
 ```
 This is research and development for implementation blockchain from scratch.
 ```
-## Directory For Each
+## Setup
+### Blockchain
+```
+$ cd blockchain && cargo run
+```
+## Directory
 ### blockchain
 This directory is development about blockchain data structure including struct of `blockchain` itself, `block` and `transaction`. Also has methods to chage the data structure like `create_new_block`, `send transaction`, `proof_of_work` and so on.
 ### p2p
