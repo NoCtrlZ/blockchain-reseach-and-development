@@ -1,12 +1,14 @@
+use serde_json::json;
+use serde::{Deserialize, Serialize};
 use crate::unit;
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Blockchain {
     pub entity: Vec<Block>,
     pub transactions: Vec<Transaction>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Block {
     index: u32,
     timestamp: u64,
@@ -16,7 +18,7 @@ pub struct Block {
     previous_hash: String
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Transaction {
     id: u64,
     amount: u64,
@@ -48,6 +50,11 @@ impl Blockchain {
         };
         self.transactions.push(transaction);
         true
+    }
+
+    pub fn transactions_to_string(&self) -> String {
+        let transactions = json!(self.transactions);
+        transactions[0].to_string()
     }
 
     pub fn print_latest_block(&self) {
