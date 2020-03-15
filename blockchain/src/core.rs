@@ -40,8 +40,11 @@ impl Blockchain {
         self.entity.last_mut().unwrap()
     }
 
+    fn latest_block_hash(&self) -> &str {
+        &self.entity.last().unwrap().previous_hash
+    }
+
     pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
-        let mut block = self.latest_block();
         let transaction = Transaction {
             id: self.transactions.len() as u64 + 1,
             amount: amount,
@@ -68,16 +71,16 @@ impl Blockchain {
 
     pub fn proof_of_work(&self) -> String {
         let difficulty: u8 = 3;
+        let transactions = json!(self.transactions);
+        let previous_block_hash = &self.latest_block_hash();
         let mut start_with = "".to_string();
-        for i in 0..difficulty {
+        for _i in 0..difficulty {
             start_with.push_str("0");
         }
-        println!("{:?}", start_with);
-        let transactions = json!(self.transactions);
         let mut nonce: u128 = 0;
         let mut done = false;
         while !done {
-            let hash = unit::sha256_hash(&transactions[0].to_string(), &nonce.to_string());
+            let hash = unit::sha256_hash(&transactions[0].to_string(), &previous_block_hash, &nonce.to_string());
             done = start_with == &hash[..difficulty as usize];
             nonce+=1;
         }
