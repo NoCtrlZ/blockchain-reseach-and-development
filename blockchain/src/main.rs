@@ -10,7 +10,7 @@ fn main() {
     let mut blockchain = core::Blockchain::new();
     blockchain.send_transaction(100, "alice", "bob");
     blockchain.send_transaction(100, "alice", "bob");
-    let json = blockchain.transactions_to_string();
-    println!("{:?}", json);
+    blockchain.proof_of_work();
+    // println!("{:?}", hash);
     blockchain.print_blockchain();
 }

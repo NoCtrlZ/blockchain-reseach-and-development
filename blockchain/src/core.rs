@@ -66,6 +66,21 @@ impl Blockchain {
         println!("blockchain: {:?}", self);
     }
 
+    pub fn proof_of_work(&self) {
+        let difficulty: u8 = 3;
+        let mut start_with = "0".to_string();
+        for i in 0..difficulty {
+            start_with.push_str("0");
+        }
+        println!("{:?}", start_with);
+        let transactions = json!(self.transactions);
+        let mut nonce: u128 = 0;
+        // while {
+            let hash = unit::sha256_hash(&transactions[0].to_string(), &nonce.to_string());
+        // }
+        println!("{:?}", hash);
+    }
+
     pub fn create_new_block(&mut self, nonce: u64, hash: &str, previous_hash: &str) {
         let block = Block {
             index: *&self.entity.len() as u32,

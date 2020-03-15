@@ -9,18 +9,9 @@ pub fn current_time() -> u64 {
     unixtime.as_secs()
 }
 
-// pub fn block_hash(block: core::Block) -> String {
-//     let stringified_transactions = transactions_to_string(block.transactions); 
-// }
-
-pub fn proof_of_work(block: &str) -> String {
+pub fn sha256_hash(block: &str, nonce: &str) -> String {
     let mut sha256 = Sha256::new();
-    sha256.input_str(&block);
+    let text = format!("{}{}", block, nonce);
+    sha256.input_str(&text);
     sha256.result_str()
 }
-
-// pub fn transactions_to_string(transactions: core::Transaction) -> String {
-//     for (i, transaction) in transactions.enumerate() {
-//         transaction.id;
-//     }
-// }
