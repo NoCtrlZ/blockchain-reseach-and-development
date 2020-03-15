@@ -34,8 +34,20 @@ impl Blockchain {
             transactions: Vec::new(),
             difficulty: 3,
         };
-        blockchain.create_new_block(0, "genesis block", "this is start");
+        blockchain.create_genesis_block();
         blockchain
+    }
+
+    pub fn create_genesis_block(&mut self) {
+        let block = Block {
+            index: 0,
+            timestamp: unit::current_time(),
+            transactions: [].to_vec(),
+            nonce: 0,
+            hash: "genesis block".to_string(),
+            previous_hash: "this is start".to_string()
+        };
+        self.entity.push(block);
     }
 
     pub fn latest_block_hash(&self) -> &str {
@@ -44,7 +56,7 @@ impl Blockchain {
 
     pub fn block_hash(&self) -> String {
         let transactions = json!(self.transactions);
-        transactions[0].to_string()
+        unit::transactions_hash(&transactions[0].to_string())
     }
 
     pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
@@ -58,7 +70,7 @@ impl Blockchain {
         true
     }
 
-    pub fn proof_of_work(&self) {
+    pub fn proof_of_work(&mut self) {
         let difficulty = self.difficulty;
         let current_block_hash = self.block_hash();
         let previous_block_hash = self.latest_block_hash();
@@ -74,17 +86,17 @@ impl Blockchain {
             }
             nonce+=1;
         }
-        self.create_new_block(nonce, &current_block_hash, previous_block_hash);
+        self.create_new_block(nonce);
     }
 
-    pub fn create_new_block(&mut self, nonce: u128, hash: &str, previous_hash: &str) {
+    pub fn create_new_block(&mut self, nonce: u128) {
         let block = Block {
             index: *&self.entity.len() as u32,
             timestamp: unit::current_time(),
             transactions: self.transactions.clone(),
             nonce: nonce,
-            hash: hash.to_string(),
-            previous_hash: previous_hash.to_string()
+            hash: self.block_hash(),
+            previous_hash: (&self.latest_block_hash()).to_string()
         };
         self.entity.push(block);
         self.transactions.clear();
