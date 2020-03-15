@@ -1,10 +1,9 @@
-use std::io::Write;
-use std::net::TcpStream;
+use hyper::{body::HttpBody as _, Client};
 
-fn main() {
-    let message = "here is client";
-    let endpoint = "127.0.0.1:3000";
-    let stream = TcpStream::connect(endpoint);
-    let mut stream = stream.unwrap();
-    stream.write(message.as_bytes()).unwrap();
+#[tokio::main]
+async fn main() {
+    let client = Client::new();
+    let uri = "http://localhost:3000".parse().unwrap();
+    let resp = client.get(uri).await.unwrap();
+    println!("Response: {}", resp.status());
 }
