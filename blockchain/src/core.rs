@@ -112,13 +112,6 @@ impl Blockchain {
     }
 }
 
-impl Block {
-    fn print_latest_transaction(self) {
-        let transaction = &self.transactions.last().unwrap();
-        println!("transactions: {:?}", transaction);
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -131,5 +124,15 @@ mod tests {
         assert_eq!(blockchain.entity[0].transactions.len(), 0);
         assert_eq!(blockchain.entity[0].hash, "genesis block".to_string());
         assert_eq!(blockchain.entity[0].previous_hash, "this is start".to_string());
+    }
+
+    #[test]
+    fn test_send_transaction() {
+        let mut blockchain = Blockchain::new();
+        let result = blockchain.send_transaction(100, "alice", "bob");
+        assert_eq!(blockchain.transactions[0].amount, 100);
+        assert_eq!(blockchain.transactions[0].sender, "alice");
+        assert_eq!(blockchain.transactions[0].recipient, "bob");
+        assert_eq!(result, true);
     }
 }

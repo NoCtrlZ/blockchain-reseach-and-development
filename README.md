@@ -1,7 +1,7 @@
 # Blockchain Research And Development
 ![badge](https://action-badges.now.sh/NoCtrlZ/blockchain-reseach-and-development?action=test)   
 ```
-This is research and development for implementation blockchain from scratch.
+This is research and development for blockchain implementation from scratch.
 ```
 ## Setup
 ### Blockchain

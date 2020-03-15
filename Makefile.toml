@@ -4,3 +4,10 @@ script = ['''
 #!/usr/bin/env bash
 cd blockchain && cargo run src/main.rs
 ''']
+
+[tasks.ts]
+description = "Test Blockchain Function"
+script = ['''
+#!/usr/bin/env bash
+cd blockchain && cargo test
+''']
