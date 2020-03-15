@@ -5,7 +5,8 @@ use crate::unit;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Blockchain {
     pub entity: Vec<Block>,
-    pub transactions: Vec<Transaction>
+    pub transactions: Vec<Transaction>,
+    pub difficulty: u8
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -13,7 +14,7 @@ pub struct Block {
     index: u32,
     timestamp: u64,
     transactions: Vec<Transaction>,
-    nonce: u64,
+    nonce: u128,
     hash: String,
     previous_hash: String
 }
@@ -30,18 +31,20 @@ impl Blockchain {
     pub fn new() -> Blockchain {
         let mut blockchain = Blockchain {
             entity: Vec::new(),
-            transactions: Vec::new()
+            transactions: Vec::new(),
+            difficulty: 3,
         };
         blockchain.create_new_block(0, "genesis block", "this is start");
         blockchain
     }
 
-    fn latest_block(&mut self) -> &mut Block {
-        self.entity.last_mut().unwrap()
+    pub fn latest_block_hash(&self) -> &str {
+        &self.entity.last().unwrap().previous_hash
     }
 
-    fn latest_block_hash(&self) -> &str {
-        &self.entity.last().unwrap().previous_hash
+    pub fn block_hash(&self) -> String {
+        let transactions = json!(self.transactions);
+        transactions[0].to_string()
     }
 
     pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
@@ -55,39 +58,26 @@ impl Blockchain {
         true
     }
 
-    pub fn transactions_to_string(&self) -> String {
-        let transactions = json!(self.transactions);
-        transactions[0].to_string()
-    }
-
-    pub fn print_latest_block(&self) {
-        let block = self.entity.last().unwrap();
-        println!("block: {:?}", block);
-    }
-
-    pub fn print_blockchain(&self) {
-        println!("blockchain: {:?}", self);
-    }
-
-    pub fn proof_of_work(&self) -> String {
-        let difficulty: u8 = 3;
-        let transactions = json!(self.transactions);
-        let previous_block_hash = &self.latest_block_hash();
+    pub fn proof_of_work(&self) {
+        let difficulty = self.difficulty;
+        let current_block_hash = self.block_hash();
+        let previous_block_hash = self.latest_block_hash();
         let mut start_with = "".to_string();
         for _i in 0..difficulty {
             start_with.push_str("0");
         }
         let mut nonce: u128 = 0;
-        let mut done = false;
-        while !done {
-            let hash = unit::sha256_hash(&transactions[0].to_string(), &previous_block_hash, &nonce.to_string());
-            done = start_with == &hash[..difficulty as usize];
+        loop {
+            let hash = unit::sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
+            if(start_with == &hash[..difficulty as usize]) {
+                break;
+            }
             nonce+=1;
         }
-        nonce.to_string()
+        self.create_new_block(nonce, &current_block_hash, previous_block_hash);
     }
 
-    pub fn create_new_block(&mut self, nonce: u64, hash: &str, previous_hash: &str) {
+    pub fn create_new_block(&mut self, nonce: u128, hash: &str, previous_hash: &str) {
         let block = Block {
             index: *&self.entity.len() as u32,
             timestamp: unit::current_time(),
@@ -98,6 +88,15 @@ impl Blockchain {
         };
         self.entity.push(block);
         self.transactions.clear();
+    }
+
+    pub fn print_latest_block(&self) {
+        let block = self.entity.last().unwrap();
+        println!("block: {:?}", block);
+    }
+
+    pub fn print_blockchain(&self) {
+        println!("blockchain: {:?}", self);
     }
 }
 

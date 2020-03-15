@@ -11,6 +11,5 @@ fn main() {
     blockchain.send_transaction(100, "alice", "bob");
     blockchain.send_transaction(100, "alice", "bob");
     let nonce = blockchain.proof_of_work();
-    println!("{:?}", nonce);
     blockchain.print_blockchain();
 }
