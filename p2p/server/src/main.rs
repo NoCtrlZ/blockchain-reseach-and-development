@@ -33,6 +33,7 @@ fn random_port() -> u16 {
 async fn main() {
     let addr = SocketAddr::from(([127, 0, 0, 1], random_port()));
     println!("{:?}", addr);
+    debug::type_of([127, 0, 0, 1])
     let make_svc = make_service_fn(|_conn| async {
         Ok::<_, Infallible>(service_fn(peer_to_peer))
     });
