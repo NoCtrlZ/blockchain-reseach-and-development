@@ -1,6 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
+use rand::Rng;
 
 pub fn current_time() -> u64 {
     let now = SystemTime::now();
@@ -19,4 +20,9 @@ pub fn sha256_hash(previous_block_hash: &str, current_block_hash: &str, nonce: &
     let text = format!("{}{}{}", previous_block_hash, current_block_hash, nonce);
     sha256.input_str(&text);
     sha256.result_str()
+}
+
+pub fn random_port() -> u16 {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(1024, 9000)
 }
