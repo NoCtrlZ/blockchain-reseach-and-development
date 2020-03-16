@@ -7,7 +7,7 @@ pub mod method {
     pub const POST: &str = "POST";
 }
 
-pub type Handler = fn(blockchain::Blockchain, req: request::Request) -> response::Response;
+pub type Handler = fn(&mut blockchain::Blockchain, req: request::Request) -> response::Response;
 
 pub struct Route {
     pub path: String,

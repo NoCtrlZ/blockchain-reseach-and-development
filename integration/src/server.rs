@@ -55,7 +55,7 @@ impl Server {
     }
 
     fn response(&self, stream: &mut TcpStream, handler: Handler, req: request::Request) {
-        let response = handler(self.blockchain.clone(), req);
+        let response = handler(&mut self.blockchain.clone(), req);
         response.write(stream);
     }
 }

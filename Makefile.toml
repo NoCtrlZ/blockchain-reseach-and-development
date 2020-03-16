@@ -24,7 +24,7 @@ cd integration && cargo run
 description = "Http Get Request"
 script = ['''
 #!/usr/bin/env bash
-curl http://localhost:3000/whole_blockchain
+curl http://localhost:3000${@}
 ''']
 
 [tasks.post]
@@ -32,4 +32,11 @@ description = "Http Post Request"
 script = ['''
 #!/usr/bin/env bash
 curl -d '{"hobby":"rock", "life":"rock"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/check_all
+''']
+
+[tasks.tx]
+description = "Send Transaction"
+script = ['''
+#!/usr/bin/env bash
+curl -d '{"amount": 100, "sender":"alice", "recipient":"bob"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/send_transaction
 ''']

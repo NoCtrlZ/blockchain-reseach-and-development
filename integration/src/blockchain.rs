@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::unit;
 use crate::response;
 use crate::request;
+use crate::debug::*;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Blockchain {
@@ -23,7 +24,6 @@ pub struct Block {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Transaction {
-    id: u64,
     amount: u64,
     sender: String,
     recipient: String
@@ -67,17 +67,6 @@ impl Blockchain {
         blockchain.to_string()
     }
 
-    pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
-        let transaction = Transaction {
-            id: self.transactions.len() as u64 + 1,
-            amount: amount,
-            sender: sender.to_string(),
-            recipient: recipient.to_string()
-        };
-        self.transactions.push(transaction);
-        true
-    }
-
     pub fn proof_of_work(&mut self) -> u128 {
         let current_block_hash = self.block_hash();
         let previous_block_hash = self.latest_block_hash();
@@ -115,18 +104,31 @@ impl Blockchain {
         start_with
     }
 
-    pub fn index_handler(self, req: request::Request) -> response::Response {
+    pub fn index_handler(&mut self, req: request::Request) -> response::Response {
         response::Response {
             prefix: response::prefix::PREFIX.to_string(),
             body: "test".to_string(),
         }
     }
 
-    pub fn check_all_handler(self, req: request::Request) -> response::Response {
+    pub fn check_all_handler(&mut self, req: request::Request) -> response::Response {
         let whole_blockchain = self.blockchain_json();
+        println!("{:?}", self);
         response::Response {
             prefix: response::prefix::PREFIX.to_string(),
             body: whole_blockchain.to_string(),
+        }
+    }
+
+    pub fn send_transaction(&mut self, req: request::Request) -> response::Response {
+        println!("{:?}", req);
+        let transaction: Transaction = serde_json::from_str(&req.body).unwrap();
+        println!("{:?}", transaction);
+        self.transactions.push(transaction);
+        println!("{:?}", self);
+        response::Response {
+            prefix: response::prefix::PREFIX.to_string(),
+            body: "hi".to_string(),
         }
     }
 }
