@@ -8,13 +8,12 @@ fn type_of<T>(_: T) -> &'static str {
 }
 
 pub mod prefix {
-    pub const PREFIX: &str = "HTTP/1.1 200 OK\r\n";
+    pub const PREFIX: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ";
 }
 
 pub struct Response {
     pub prefix: String,
-    pub header: HashMap<String, String>,
-    pub body: String,
+    pub body: String
 }
 
 impl Response {
@@ -26,9 +25,4 @@ impl Response {
             .unwrap();
         stream.flush().unwrap();
     }
-
-    // fn compile(&self) -> String {
-    //     let prefix = prefix::PREFIX;
-
-    // }
 }

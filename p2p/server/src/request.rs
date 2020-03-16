@@ -59,14 +59,8 @@ impl Request {
     }
 
     pub fn index_handler(self) -> response::Response {
-        let mut book_reviews = HashMap::new();
-        book_reviews.insert(
-            "Adventures of Huckleberry Finn".to_string(),
-            "My favorite book.".to_string(),
-        );
         response::Response {
             prefix: response::prefix::PREFIX.to_string(),
-            header: book_reviews,
             body: "Test".to_string(),
         }
     }
