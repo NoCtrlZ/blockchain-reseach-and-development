@@ -9,7 +9,8 @@ cd blockchain && cargo run src/main.rs
 description = "Test Blockchain Function"
 script = ['''
 #!/usr/bin/env bash
-cd blockchain && cargo test
+(cd blockchain && cargo test)
+(cd integration && cargo test)
 ''']
 
 [tasks.it]
