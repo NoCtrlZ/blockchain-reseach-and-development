@@ -29,16 +29,17 @@ pub struct Transaction {
 
 impl Blockchain {
     pub fn new() -> Blockchain {
+        let default_difficulty = 3;
         let mut blockchain = Blockchain {
             entity: Vec::new(),
             transactions: Vec::new(),
-            difficulty: 3,
+            difficulty: default_difficulty,
         };
         blockchain.create_genesis_block();
         blockchain
     }
 
-    pub fn create_genesis_block(&mut self) {
+    fn create_genesis_block(&mut self) {
         let block = Block {
             index: 0,
             timestamp: unit::current_time(),
@@ -81,7 +82,7 @@ impl Blockchain {
         let mut nonce: u128 = 0;
         loop {
             let hash = unit::sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
-            if(start_with == &hash[..difficulty as usize]) {
+            if start_with == &hash[..difficulty as usize] {
                 break;
             }
             nonce+=1;
@@ -100,11 +101,6 @@ impl Blockchain {
         };
         self.entity.push(block);
         self.transactions.clear();
-    }
-
-    pub fn print_latest_block(&self) {
-        let block = self.entity.last().unwrap();
-        println!("block: {:?}", block);
     }
 
     pub fn print_blockchain(&self) {
