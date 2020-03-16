@@ -2,9 +2,8 @@
 ![badge](https://action-badges.now.sh/NoCtrlZ/blockchain-reseach-and-development?action=test)   
 This is research and development for blockchain implementation from scratch.
 ## Setup
-### Blockchain
 ```
-$ cd blockchain && cargo run
+$ makers it
 ```
 ## Directory
 ### blockchain
@@ -13,3 +12,7 @@ Development about blockchain data structure including struct of `blockchain` its
 Development about p2p client including syncing method with other nodes.
 ### integration
 Development about integration blockchain and p2p.
+### Test
+```
+$ makers ts
+```
