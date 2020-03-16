@@ -1,7 +1,3 @@
-use std::net::SocketAddr;
-use hyper::{Body, Method, Request, Response, StatusCode};
-use std::convert::Infallible;
-
 #[derive(Debug)]
 pub struct Network {
     pub nodes: Vec<Node>,
@@ -13,26 +9,11 @@ pub struct Node {
     port: u16
 }
 
-pub async fn peer_to_peer(req: Request<Body>) -> Result<Response<Body>, Infallible> {
-    match (req.method(), req.uri().path()) {
-        (&Method::GET, "/") => Ok(Response::new("hello world man".into())),
-        (&Method::POST, "/check_all") => {
-            println!("{:?}", req);
-            Ok(Response::new("hello world man".into()))
-        },
-        _ => {
-            let mut not_found = Response::default();
-            *not_found.status_mut() = StatusCode::NOT_FOUND;
-            Ok(not_found)
-        }
-    }
-}
-
 impl Network {
     pub fn new() -> Network {
         let mut network = Network {
             nodes: Vec::new(),
-            host: [127, 0, 0, 1]
+            host: [127, 0, 0, 1],
         };
         let original_node = Node {
             port: 3000
@@ -41,7 +22,17 @@ impl Network {
         network
     }
 
-    pub fn get_address(self) -> SocketAddr {
-        SocketAddr::from(([127, 0, 0, 1], self.nodes[0].port))
+    pub fn get_address(self) -> String {
+        let mut address = "".to_string();
+        for i in 0..self.host.len() {
+            address.push_str(&self.host[i].to_string());
+            if i != self.host.len() - 1 {
+                address.push_str(".");
+            } else {
+                address.push_str(":");
+                address.push_str(&self.nodes[0].port.to_string());
+            }
+        }
+        address
     }
 }
