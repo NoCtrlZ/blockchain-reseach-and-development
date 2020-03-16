@@ -9,8 +9,8 @@ mod response;
 
 fn set_router() -> router::Router {
     let mut router = router::Router::new();
-    router.get("/", request::Request::index_handler);
-    router.post("/check_all", request::Request::check_all_handler);
+    router.get("/", blockchain::Blockchain::index_handler);
+    router.post("/whole_blockchain", blockchain::Blockchain::check_all_handler);
     router
 }
 

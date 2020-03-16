@@ -56,20 +56,6 @@ impl Request {
         headers.insert(item.to_string(), content.to_string());
         headers
     }
-
-    pub fn index_handler(self) -> response::Response {
-        response::Response {
-            prefix: response::prefix::PREFIX.to_string(),
-            body: "test".to_string(),
-        }
-    }
-
-    pub fn check_all_handler(self) -> response::Response {
-        response::Response {
-            prefix: response::prefix::PREFIX.to_string(),
-            body: "check all test".to_string(),
-        }
-    }
 }
 
 fn convert(stream: &mut TcpStream) -> String {

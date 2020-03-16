@@ -6,7 +6,7 @@ pub struct Network {
 
 #[derive(Debug)]
 pub struct Node {
-    port: u16
+    pub port: u16
 }
 
 impl Network {

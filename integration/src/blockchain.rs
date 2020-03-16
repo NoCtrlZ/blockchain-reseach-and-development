@@ -1,15 +1,17 @@
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use crate::unit;
+use crate::response;
+use crate::request;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Blockchain {
     pub entity: Vec<Block>,
     pub transactions: Vec<Transaction>,
     pub difficulty: u8
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Block {
     index: u32,
     timestamp: u64,
@@ -106,6 +108,20 @@ impl Blockchain {
             start_with.push_str("0");
         }
         start_with
+    }
+
+    pub fn index_handler(self, req: request::Request) -> response::Response {
+        response::Response {
+            prefix: response::prefix::PREFIX.to_string(),
+            body: "test".to_string(),
+        }
+    }
+
+    pub fn check_all_handler(self, req: request::Request) -> response::Response {
+        response::Response {
+            prefix: response::prefix::PREFIX.to_string(),
+            body: "check all test".to_string(),
+        }
     }
 }
 

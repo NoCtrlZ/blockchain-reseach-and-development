@@ -1,12 +1,13 @@
 use crate::request;
 use crate::response;
+use crate::blockchain;
 
 pub mod method {
     pub const GET: &str = "GET";
     pub const POST: &str = "POST";
 }
 
-pub type Handler = fn(request::Request) -> response::Response;
+pub type Handler = fn(blockchain::Blockchain, req: request::Request) -> response::Response;
 
 pub struct Route {
     pub path: String,
