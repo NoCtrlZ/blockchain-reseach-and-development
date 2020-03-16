@@ -2,18 +2,20 @@ mod blockchain;
 mod p2p;
 mod unit;
 mod debug;
+mod request;
+mod router;
+mod server;
+mod response;
 
-extern crate rand;
-
-#[tokio::main]
-async fn main() {
+fn main() {
     let network = p2p::Network::new();
     let addr = network.get_address();
-    println!("{:?}", addr);
+    let mut router = router::Router::new();
+    router.get("/", request::Request::index_handler);
+    println!("{:?}", &addr);
 
     let mut blockchain = blockchain::Blockchain::new();
     blockchain.send_transaction(100, "alice", "bob");
     let nonce = blockchain.proof_of_work();
-
-    debug::print_blockchain(blockchain);
+    server::Server::new(router).start(&addr);
 }
