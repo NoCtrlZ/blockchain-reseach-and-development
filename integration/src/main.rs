@@ -7,12 +7,17 @@ mod router;
 mod server;
 mod response;
 
+fn set_router() -> router::Router {
+    let mut router = router::Router::new();
+    router.get("/", request::Request::index_handler);
+    router.post("/check_all", request::Request::check_all_handler);
+    router
+}
+
 fn main() {
     let network = p2p::Network::new();
     let addr = network.get_address();
-    let mut router = router::Router::new();
-    router.get("/", request::Request::index_handler);
-    println!("{:?}", &addr);
+    let router = set_router();
 
     let mut blockchain = blockchain::Blockchain::new();
     blockchain.send_transaction(100, "alice", "bob");

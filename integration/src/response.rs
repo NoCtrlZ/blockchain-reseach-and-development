@@ -1,11 +1,5 @@
-use std::any::type_name;
-use std::collections::HashMap;
 use std::io::Write;
 use std::net::TcpStream;
-
-fn type_of<T>(_: T) -> &'static str {
-    type_name::<T>()
-}
 
 pub mod prefix {
     pub const PREFIX: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ";

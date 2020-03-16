@@ -1,10 +1,7 @@
-use std::collections::HashMap;
-use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
 
 use crate::request;
-use crate::response;
 use crate::router;
 
 pub struct Server {

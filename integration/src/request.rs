@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 use std::io::prelude::*;
-use std::io::BufReader;
 use std::net::TcpStream;
 
 use crate::router;
 use crate::response;
-use crate::request;
+
 #[derive(Debug)]
 pub struct Request {
     pub method: String,
@@ -61,7 +60,14 @@ impl Request {
     pub fn index_handler(self) -> response::Response {
         response::Response {
             prefix: response::prefix::PREFIX.to_string(),
-            body: "Test".to_string(),
+            body: "test".to_string(),
+        }
+    }
+
+    pub fn check_all_handler(self) -> response::Response {
+        response::Response {
+            prefix: response::prefix::PREFIX.to_string(),
+            body: "check all test".to_string(),
         }
     }
 }
