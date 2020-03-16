@@ -18,6 +18,4 @@ fn set_router() -> router::Router {
 fn main() {
     let router = set_router();
     server::Server::new(router).start();
-    // blockchain.send_transaction(100, "alice", "bob");
-    // let nonce = blockchain.proof_of_work();
 }
