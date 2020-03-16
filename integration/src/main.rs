@@ -1,6 +1,7 @@
 mod blockchain;
 mod p2p;
 mod unit;
+mod debug;
 
 use std::net::SocketAddr;
 use std::convert::Infallible;
@@ -18,7 +19,7 @@ async fn main() {
     let mut blockchain = blockchain::Blockchain::new();
     blockchain.send_transaction(100, "alice", "bob");
     let nonce = blockchain.proof_of_work();
-    blockchain.print_blockchain();
+    debug::print_blockchain(blockchain);
     if let Err(e) = server.await {
         eprintln!("server error: {}", e);
     }

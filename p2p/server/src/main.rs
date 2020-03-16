@@ -4,7 +4,6 @@ use std::net::SocketAddr;
 use hyper::{Body, Method, Request, Response, Server, StatusCode};
 use hyper::service::{make_service_fn, service_fn};
 use rand::Rng;
-use std::any::type_name;
 
 fn type_of<T>(_: T) -> &'static str {
     type_name::<T>()

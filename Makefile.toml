@@ -11,3 +11,17 @@ script = ['''
 #!/usr/bin/env bash
 cd blockchain && cargo test
 ''']
+
+[tasks.it]
+description = "Start Integrated Blockchain"
+script = ['''
+#!/usr/bin/env bash
+cd integration && cargo run
+''']
+
+[tasks.post]
+description = "Http Post Request"
+script = ['''
+#!/usr/bin/env bash
+curl -d '{"hobby":"rock", "life":"rock"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/check_all
+''']

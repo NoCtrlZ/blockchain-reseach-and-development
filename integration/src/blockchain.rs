@@ -107,10 +107,6 @@ impl Blockchain {
         }
         start_with
     }
-
-    pub fn print_blockchain(&self) {
-        println!("blockchain: {:?}", self);
-    }
 }
 
 #[cfg(test)]
