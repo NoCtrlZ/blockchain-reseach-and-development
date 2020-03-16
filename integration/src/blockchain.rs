@@ -71,23 +71,20 @@ impl Blockchain {
         true
     }
 
-    pub fn proof_of_work(&mut self) {
-        let difficulty = self.difficulty;
+    pub fn proof_of_work(&mut self) -> u128 {
         let current_block_hash = self.block_hash();
         let previous_block_hash = self.latest_block_hash();
-        let mut start_with = "".to_string();
-        for _i in 0..difficulty {
-            start_with.push_str("0");
-        }
         let mut nonce: u128 = 0;
+        let start_with = self.difficulty_checker();
         loop {
             let hash = unit::sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
-            if start_with == &hash[..difficulty as usize] {
+            if start_with == &hash[..self.difficulty as usize] {
                 break;
             }
             nonce+=1;
         }
         self.create_new_block(nonce);
+        nonce
     }
 
     pub fn create_new_block(&mut self, nonce: u128) {
@@ -103,6 +100,14 @@ impl Blockchain {
         self.transactions.clear();
     }
 
+    pub fn difficulty_checker(&self) -> String {
+        let mut start_with = "".to_string();
+        for _i in 0..self.difficulty {
+            start_with.push_str("0");
+        }
+        start_with
+    }
+
     pub fn print_blockchain(&self) {
         println!("blockchain: {:?}", self);
     }
@@ -114,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_new_block_chain() {
-        let mut blockchain = Blockchain::new();
+        let blockchain = Blockchain::new();
         assert_eq!(blockchain.entity[0].index, 0);
         assert_eq!(blockchain.entity[0].nonce, 0);
         assert_eq!(blockchain.entity[0].transactions.len(), 0);
@@ -130,5 +135,19 @@ mod tests {
         assert_eq!(blockchain.transactions[0].sender, "alice");
         assert_eq!(blockchain.transactions[0].recipient, "bob");
         assert_eq!(result, true);
+    }
+
+    #[test]
+    fn test_get_previous_hash() {
+        let blockchain = Blockchain::new();
+        let previous_hash = blockchain.latest_block_hash();
+        assert_eq!(blockchain.entity[0].previous_hash, previous_hash);
+    }
+
+    #[test]
+    fn test_difficulty_checker() {
+        let blockchain = Blockchain::new();
+        let start_with = blockchain.difficulty_checker();
+        assert_eq!(start_with, "000");
     }
 }

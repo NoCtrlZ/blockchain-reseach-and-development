@@ -11,3 +11,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run tests
       run: cd blockchain && cargo test --verbose
+      run: cd integration && cargo test --verbose
