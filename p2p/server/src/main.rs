@@ -3,6 +3,7 @@ use rand::Rng;
 mod request;
 mod router;
 mod server;
+mod response;
 
 fn random_port() -> u16 {
     let mut rng = rand::thread_rng();
