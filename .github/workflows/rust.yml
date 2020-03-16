@@ -12,5 +12,8 @@ jobs:
     - name: blockchain tests
       run: cd blockchain && cargo test --verbose
 
-    - name: integration tests
-      run: cd integration && cargo test --verbose
+    - name: install dependencies
+      run: cargo install --force cargo-make
+
+    - name: integration test
+      run: makers ts
