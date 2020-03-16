@@ -11,3 +11,10 @@ script = ['''
 #!/usr/bin/env bash
 cd client && cargo run
 ''']
+
+[tasks.post]
+description = "Http Post Request"
+script = ['''
+#!/usr/bin/env bash
+curl -d '{"hobby":"rock", "life":"rock"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/check_all
+''']
