@@ -35,7 +35,8 @@ impl Server {
         server
     }
 
-    pub fn start(&self, addr: &str) {
+    pub fn start(&self) {
+        let addr = self.network.get_address();
         let listener = TcpListener::bind(addr).unwrap();
         for stream in listener.incoming() {
             self.handle(&mut stream.unwrap());

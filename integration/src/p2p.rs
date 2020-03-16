@@ -22,7 +22,7 @@ impl Network {
         network
     }
 
-    pub fn get_address(self) -> String {
+    pub fn get_address(&self) -> String {
         let mut address = "".to_string();
         for i in 0..self.host.len() {
             address.push_str(&self.host[i].to_string());
