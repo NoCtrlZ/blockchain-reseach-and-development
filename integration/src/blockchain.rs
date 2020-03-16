@@ -62,6 +62,11 @@ impl Blockchain {
         unit::transactions_hash(&transactions[0].to_string())
     }
 
+    pub fn blockchain_json(&self) -> String {
+        let blockchain = json!(&self);
+        blockchain.to_string()
+    }
+
     pub fn send_transaction(&mut self, amount: u64, sender: &str, recipient: &str) -> bool {
         let transaction = Transaction {
             id: self.transactions.len() as u64 + 1,
@@ -118,9 +123,10 @@ impl Blockchain {
     }
 
     pub fn check_all_handler(self, req: request::Request) -> response::Response {
+        let whole_blockchain = self.blockchain_json();
         response::Response {
             prefix: response::prefix::PREFIX.to_string(),
-            body: "check all test".to_string(),
+            body: whole_blockchain.to_string(),
         }
     }
 }

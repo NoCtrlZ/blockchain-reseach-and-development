@@ -20,6 +20,13 @@ script = ['''
 cd integration && cargo run
 ''']
 
+[tasks.get]
+description = "Http Get Request"
+script = ['''
+#!/usr/bin/env bash
+curl http://localhost:3000/whole_blockchain
+''']
+
 [tasks.post]
 description = "Http Post Request"
 script = ['''

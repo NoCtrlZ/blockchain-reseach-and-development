@@ -10,17 +10,16 @@ mod response;
 fn set_router() -> router::Router {
     let mut router = router::Router::new();
     router.get("/", blockchain::Blockchain::index_handler);
-    router.post("/whole_blockchain", blockchain::Blockchain::check_all_handler);
+    router.get("/whole_blockchain", blockchain::Blockchain::check_all_handler);
     router
 }
 
 fn main() {
     let network = p2p::Network::new();
     let addr = network.get_address();
-    let router = set_router();
-
     let mut blockchain = blockchain::Blockchain::new();
     blockchain.send_transaction(100, "alice", "bob");
     let nonce = blockchain.proof_of_work();
+    let router = set_router();
     server::Server::new(router).start(&addr);
 }

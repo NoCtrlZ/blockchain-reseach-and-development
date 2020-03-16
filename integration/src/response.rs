@@ -13,9 +13,8 @@ pub struct Response {
 impl Response {
     pub fn write(&self, stream: &mut TcpStream) {
         let response = &self.body;
-        let hello = "hello";
         stream
-            .write(format!("{}{}", hello, response).as_bytes())
+            .write(response.as_bytes())
             .unwrap();
         stream.flush().unwrap();
     }
