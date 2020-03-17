@@ -22,8 +22,8 @@ impl PrivateKey {
         let mut prv_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
         let mut pub_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
         for _i in 0..PRIVATE_KEY_LENGT {
-            let (adam, eve) = random_uint256_pair();
-            pub_pairs.push(hash_uint256_pair(&adam, &eve));
+            let (adam, eve) = prv_key_pair();
+            pub_pairs.push(pub_key_pair(&adam, &eve));
             prv_pairs.push((adam, eve));
         }
         let public_key = PublicKey {
@@ -36,7 +36,7 @@ impl PrivateKey {
     }
 }
 
-fn random_uint256_pair() -> (U256, U256) {
+fn prv_key_pair() -> (U256, U256) {
     (random_uint256(), random_uint256())
 }
 
@@ -49,7 +49,7 @@ fn u64_to_uint256() -> U256 {
     (rng.gen::<u64>()).into()
 }
 
-fn hash_uint256_pair(adam: &U256, eve: &U256) -> (String, String) {
+fn pub_key_pair(adam: &U256, eve: &U256) -> (String, String) {
     (sha256_hash(&adam.to_string()), sha256_hash(&eve.to_string()))
 }
 
@@ -66,9 +66,16 @@ mod tests {
     use std::any::type_name;
 
     #[test]
-    fn test_new_block_chain() {
+    fn test_u64_to_bigint() {
         let u64_to_uint256 = u64_to_uint256();
         assert_eq!(type_of(&U256), type_of(&u64_to_uint256));
+    }
+
+    #[test]
+    fn test_sha256_hash() {
+        let hashed_value = sha256_hash("hello");
+        assert_eq!("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", &hashed_value);
+        assert_eq!(64, hashed_value.len());
     }
 
     fn type_of<T>(_: T) -> &'static str {

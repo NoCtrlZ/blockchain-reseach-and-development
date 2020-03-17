@@ -10,7 +10,7 @@ mod tests {
     #[test]
     fn test_private_key_new() {
         let key = key::PrivateKey::new();
-        println!("{:?}", key);
         assert_eq!(key::PRIVATE_KEY_LENGT, key.pairs.len());
+        assert_eq!(key::PRIVATE_KEY_LENGT, key.public_key.pairs.len());
     }
 }
