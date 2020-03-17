@@ -3,14 +3,15 @@ use rand::Rng;
 
 #[derive(Debug)]
 pub struct PrivateKey {
-    pairs: Vec<(U256, U256)>
+    pub pairs: Vec<(U256, U256)>
 }
+
+pub static PRIVATE_KEY_LENGT: usize = 256;
 
 impl PrivateKey {
     pub fn new() -> PrivateKey {
-        let secret_key_length: usize = 256;
-        let mut pairs = Vec::with_capacity(secret_key_length);
-        for _i in 0..secret_key_length {
+        let mut pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
+        for _i in 0..PRIVATE_KEY_LENGT {
             pairs.push(random_uint256_pair());
         }
         PrivateKey {
@@ -33,7 +34,6 @@ fn u64_to_uint256() -> U256 {
 }
 
 #[cfg(test)]
-use std::any::type_name;
 
 mod tests {
     use super::*;
