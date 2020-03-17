@@ -59,6 +59,32 @@ fn sha256_hash(random_number: &str) -> String {
     sha256.result_str()
 }
 
+fn text_to_binary(plain_text: &str) -> String {
+    plain_text.chars().map(to_binary).collect()
+}
+
+fn to_binary(c: char) -> &'static str {
+    match c {
+        '0' => "0000",
+        '1' => "0001",
+        '2' => "0010",
+        '3' => "0011",
+        '4' => "0100",
+        '5' => "0101",
+        '6' => "0110",
+        '7' => "0111",
+        '8' => "1000",
+        '9' => "1001",
+        'a' => "1010",
+        'b' => "1011",
+        'c' => "1100",
+        'd' => "1101",
+        'e' => "1110",
+        'f' => "1111",
+        _ => "",
+    }
+}
+
 #[cfg(test)]
 
 mod tests {
@@ -76,6 +102,13 @@ mod tests {
         let hashed_value = sha256_hash("hello");
         assert_eq!("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", &hashed_value);
         assert_eq!(64, hashed_value.len());
+    }
+
+    #[test]
+    fn test_to_binary() {
+        let text = "0123456789abcdef";
+        let binary = text_to_binary(&text);
+        assert_eq!("0000000100100011010001010110011110001001101010111100110111101111", &binary);
     }
 
     fn type_of<T>(_: T) -> &'static str {
