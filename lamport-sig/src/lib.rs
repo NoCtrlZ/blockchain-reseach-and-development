@@ -1,10 +1,10 @@
 extern crate rand;
 extern crate bigint;
+extern crate rustc_hex;
 
 mod key;
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     #[test]

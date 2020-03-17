@@ -12,7 +12,7 @@ pub struct PrivateKey {
 
 #[derive(Debug)]
 pub struct PublicKey {
-    pub pairs: Vec<(String, String)>
+    pub pairs: Vec<(U256, U256)>
 }
 
 pub static PRIVATE_KEY_LENGT: usize = 256;
@@ -49,40 +49,52 @@ fn u64_to_uint256() -> U256 {
     (rng.gen::<u64>()).into()
 }
 
-fn pub_key_pair(adam: &U256, eve: &U256) -> (String, String) {
+fn pub_key_pair(adam: &U256, eve: &U256) -> (U256, U256) {
     (sha256_hash(&adam.to_string()), sha256_hash(&eve.to_string()))
 }
 
-fn sha256_hash(random_number: &str) -> String {
+fn sha256_hash(random_number: &str) -> U256 {
     let mut sha256 = Sha256::new();
     sha256.input_str(&random_number);
-    sha256.result_str()
+    from_str(&sha256.result_str())
 }
 
 fn text_to_binary(plain_text: &str) -> String {
     plain_text.chars().map(to_binary).collect()
 }
 
-fn to_binary(c: char) -> &'static str {
+fn to_binary(c: char) -> String {
     match c {
-        '0' => "0000",
-        '1' => "0001",
-        '2' => "0010",
-        '3' => "0011",
-        '4' => "0100",
-        '5' => "0101",
-        '6' => "0110",
-        '7' => "0111",
-        '8' => "1000",
-        '9' => "1001",
-        'a' => "1010",
-        'b' => "1011",
-        'c' => "1100",
-        'd' => "1101",
-        'e' => "1110",
-        'f' => "1111",
-        _ => "",
+        '0' => "0000".to_string(),
+        '1' => "0001".to_string(),
+        '2' => "0010".to_string(),
+        '3' => "0011".to_string(),
+        '4' => "0100".to_string(),
+        '5' => "0101".to_string(),
+        '6' => "0110".to_string(),
+        '7' => "0111".to_string(),
+        '8' => "1000".to_string(),
+        '9' => "1001".to_string(),
+        'a' => "1010".to_string(),
+        'b' => "1011".to_string(),
+        'c' => "1100".to_string(),
+        'd' => "1101".to_string(),
+        'e' => "1110".to_string(),
+        'f' => "1111".to_string(),
+        _ => "".to_string(),
     }
+}
+
+fn from_str(value: &str) -> U256 {
+    use rustc_hex::FromHex;
+
+    let bytes: Vec<u8> = match value.len() % 2 == 0 {
+        true => value.from_hex().unwrap(),
+        false => ("0".to_owned() + value).from_hex().unwrap()
+    };
+
+    let bytes_ref: &[u8] = &bytes;
+    From::from(bytes_ref)
 }
 
 #[cfg(test)]
@@ -100,8 +112,7 @@ mod tests {
     #[test]
     fn test_sha256_hash() {
         let hashed_value = sha256_hash("hello");
-        assert_eq!("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", &hashed_value);
-        assert_eq!(64, hashed_value.len());
+        assert_eq!(from_str("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"), hashed_value);
     }
 
     #[test]
