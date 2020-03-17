@@ -26,13 +26,25 @@ impl PrivateKey {
             pub_pairs.push(pub_key_pair(&adam, &eve));
             prv_pairs.push((adam, eve));
         }
-        let public_key = PublicKey {
-            pairs: pub_pairs
-        };
         PrivateKey {
             pairs: prv_pairs,
-            public_key: public_key
+            public_key: PublicKey {
+                pairs: pub_pairs
+            }
         }
+    }
+
+    pub fn sign(&self, plain_text: &str) -> Vec<U256> {
+        let mut message = message_creation(plain_text);
+        let mut signature = Vec::with_capacity(PRIVATE_KEY_LENGT);
+        for i in 0..message.len() {
+            match message.chars().nth(i).unwrap() {
+                '1' => { signature.push(self.pairs[i].0) }
+                '0' => { signature.push(self.pairs[i].1) }
+                _ => panic!("this is not binary")
+            }
+        }
+        signature
     }
 }
 
@@ -53,14 +65,18 @@ fn pub_key_pair(adam: &U256, eve: &U256) -> (U256, U256) {
     (sha256_hash(&adam.to_string()), sha256_hash(&eve.to_string()))
 }
 
-fn sha256_hash(random_number: &str) -> U256 {
+fn sha256_hash(target: &str) -> U256 {
     let mut sha256 = Sha256::new();
-    sha256.input_str(&random_number);
+    sha256.input_str(&target);
     from_str(&sha256.result_str())
 }
 
-fn text_to_binary(plain_text: &str) -> String {
-    plain_text.chars().map(to_binary).collect()
+fn message_creation(plain_text: &str) -> String {
+    text_to_binary(&sha256_hash(&plain_text).to_string())
+}
+
+fn text_to_binary(hashed_text: &str) -> String {
+    hashed_text.chars().map(to_binary).collect()
 }
 
 fn to_binary(c: char) -> String {
@@ -98,7 +114,6 @@ fn from_str(value: &str) -> U256 {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use std::any::type_name;
@@ -106,7 +121,7 @@ mod tests {
     #[test]
     fn test_u64_to_bigint() {
         let u64_to_uint256 = u64_to_uint256();
-        assert_eq!(type_of(&U256), type_of(&u64_to_uint256));
+        assert_eq!(type_of(U256), type_of(u64_to_uint256));
     }
 
     #[test]
