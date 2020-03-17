@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 bigint = "4"
 rand = "0.7"
+rust-crypto = "0.2"

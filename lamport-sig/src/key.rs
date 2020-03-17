@@ -1,7 +1,10 @@
 use bigint::U256;
 use rand::Rng;
+use crypto::sha2::Sha256;
+use crypto::digest::Digest;
+use std::iter::repeat;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrivateKey {
     pub pairs: Vec<(U256, U256)>
 }
@@ -25,12 +28,18 @@ fn random_uint256_pair() -> (U256, U256) {
 }
 
 fn random_uint256() -> U256 {
-    u64_to_uint256() * u64_to_uint256()
+    u64_to_uint256() * u64_to_uint256() * u64_to_uint256() * u64_to_uint256()
 }
 
 fn u64_to_uint256() -> U256 {
     let mut rng = rand::thread_rng();
     (rng.gen::<u64>()).into()
+}
+
+fn sha256_hash(random_number: &str) -> String {
+    let mut sha256 = Sha256::new();
+    sha256.input_str(&random_number);
+    sha256.result_str()
 }
 
 #[cfg(test)]
