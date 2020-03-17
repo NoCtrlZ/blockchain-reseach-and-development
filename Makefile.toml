@@ -11,6 +11,7 @@ script = ['''
 #!/usr/bin/env bash
 (cd blockchain && cargo test)
 (cd integration && cargo test)
+(cd lamport-sig && cargo test)
 ''']
 
 [tasks.it]

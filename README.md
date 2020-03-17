@@ -13,7 +13,9 @@ Development about blockchain data structure including struct of `blockchain` its
 ### 📡p2p
 Development about p2p client including syncing method with other nodes. Creating Json server which is used as endpoint by user from scratch.
 ### 🚀integration
-Integration result of research and development. This behaves as actual blockchain which proofs the ownership of digital contents. So cool
+Integration result of research and development. This behaves as actual blockchain which proofs the ownership of digital contents. So cool!
+### 🛸lamport-sig
+Development about lamport signature which has tolerance for quantum computer. Generating private key and signing transaction.
 ## Test
 ```
 $ makers ts
