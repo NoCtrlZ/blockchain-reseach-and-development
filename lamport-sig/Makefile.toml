@@ -1,0 +1,13 @@
+[tasks.ts]
+description = "Test Lamport Signature"
+script = ['''
+#!/usr/bin/env bash
+cargo test -- --nocapture
+''']
+
+[tasks.pb]
+description = "Publish Cargo Package"
+script = ['''
+#!/usr/bin/env bash
+cargo publish
+''']
