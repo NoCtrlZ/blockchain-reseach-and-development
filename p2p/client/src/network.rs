@@ -24,6 +24,14 @@ impl Network {
         });
         network
     }
+
+    pub fn endpoint(&self) -> String {
+        let mut endpoint = "".to_string();
+        endpoint.push_str(&self.host);
+        endpoint.push_str(":");
+        endpoint.push_str(&self.nodes[0].port.to_string());
+        endpoint
+    }
 }
 
 fn random_string() -> String {
@@ -41,6 +49,13 @@ fn random_string() -> String {
 mod tests {
     use super::*;
     use std::any::type_name;
+
+    #[test]
+    fn test_get_endpoint() {
+        let network = Network::new();
+        let endpoint = network.endpoint();
+        assert_eq!("127.0.0.1:3000", endpoint);
+    }
 
     #[test]
     fn test_random_string() {
