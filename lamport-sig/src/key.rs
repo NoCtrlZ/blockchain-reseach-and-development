@@ -49,6 +49,20 @@ impl PrivateKey {
     }
 }
 
+impl PublicKey {
+    pub fn verify(&self, plain_text: &str, signature: Vec<U256>) -> bool {
+        let mut message = message_creation(plain_text);
+        for i in 0..SIGNATURE_LENGT {
+            match message.chars().nth(i).unwrap() {
+                '1' => { if !compare_with_pub(signature[i], self.pairs[i].0) {panic!("invalid signature")}}
+                '0' => { if !compare_with_pub(signature[i], self.pairs[i].1) {panic!("invalid signature")}}
+                _ => panic!("this is not binary")
+            }
+        }
+        true
+    }
+}
+
 fn prv_key_pair() -> (U256, U256) {
     (random_uint256(), random_uint256())
 }
@@ -112,6 +126,10 @@ fn from_str(value: &str) -> U256 {
 
     let bytes_ref: &[u8] = &bytes;
     From::from(bytes_ref)
+}
+
+fn compare_with_pub(signature: U256, pub_key: U256) -> bool {
+    sha256_hash(&signature.to_string()) == pub_key
 }
 
 #[cfg(test)]
