@@ -3,11 +3,13 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
+use base64::encode;
 
 #[derive(Debug, Clone)]
 pub struct Wallet {
     pub private_key: PrivateKey,
-    pub public_key: PublicKey
+    pub public_key: PublicKey,
+    pub address: String
 }
 
 #[derive(Debug, Clone)]
@@ -27,18 +29,22 @@ impl Wallet {
     pub fn new() -> Wallet {
         let mut prv_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
         let mut pub_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
+        let mut public_key_string = "".to_string();
         for _i in 0..PRIVATE_KEY_LENGT {
             let (adam, eve) = prv_key_pair();
             pub_pairs.push(pub_key_pair(&adam, &eve));
+            public_key_string.push_str(&encode(uint256_to_string(&adam, &eve).as_bytes()));
             prv_pairs.push((adam, eve));
         }
+        let address = encode(sha256_hash(&public_key_string).to_string());
         Wallet {
             private_key: PrivateKey {
                 pairs: prv_pairs
             },
             public_key: PublicKey {
                 pairs: pub_pairs
-            }
+            },
+            address: address
         }
     }
 
@@ -57,6 +63,10 @@ impl Wallet {
 
     pub fn get_public_key(&self) -> PublicKey {
         self.public_key.clone()
+    }
+
+    pub fn get_address(&self) -> String {
+        self.address.clone()
     }
 }
 
@@ -141,6 +151,10 @@ fn from_str(value: &str) -> U256 {
 
 fn compare_with_pub(signature: U256, pub_key: U256) -> bool {
     sha256_hash(&signature.to_string()) == pub_key
+}
+
+fn uint256_to_string(adam: &U256, eve: &U256) -> String {
+    format!("{}{}", adam.to_string(), eve.to_string())
 }
 
 #[cfg(test)]
