@@ -16,6 +16,7 @@ pub struct PublicKey {
 }
 
 pub static PRIVATE_KEY_LENGT: usize = 256;
+pub static SIGNATURE_LENGT: usize = 256;
 
 impl PrivateKey {
     pub fn new() -> PrivateKey {
@@ -36,8 +37,8 @@ impl PrivateKey {
 
     pub fn sign(&self, plain_text: &str) -> Vec<U256> {
         let mut message = message_creation(plain_text);
-        let mut signature = Vec::with_capacity(PRIVATE_KEY_LENGT);
-        for i in 0..message.len() {
+        let mut signature = Vec::with_capacity(SIGNATURE_LENGT);
+        for i in 0..SIGNATURE_LENGT {
             match message.chars().nth(i).unwrap() {
                 '1' => { signature.push(self.pairs[i].0) }
                 '0' => { signature.push(self.pairs[i].1) }
@@ -135,6 +136,14 @@ mod tests {
         let text = "0123456789abcdef";
         let binary = text_to_binary(&text);
         assert_eq!("0000000100100011010001010110011110001001101010111100110111101111", &binary);
+    }
+
+    #[test]
+    fn test_sign_message() {
+        let text = "hello world";
+        let key = PrivateKey::new();
+        let signature = key.sign(&text);
+        assert_eq!(SIGNATURE_LENGT, signature.len());
     }
 
     fn type_of<T>(_: T) -> &'static str {
