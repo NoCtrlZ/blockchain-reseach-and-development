@@ -4,13 +4,13 @@ use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrivateKey {
     pub pairs: Vec<(U256, U256)>,
     pub public_key: PublicKey
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PublicKey {
     pub pairs: Vec<(U256, U256)>
 }
@@ -46,6 +46,10 @@ impl PrivateKey {
             }
         }
         signature
+    }
+
+    pub fn to_public_key(&self) -> PublicKey {
+        self.public_key.clone()
     }
 }
 
@@ -162,6 +166,15 @@ mod tests {
         let key = PrivateKey::new();
         let signature = key.sign(&text);
         assert_eq!(SIGNATURE_LENGT, signature.len());
+    }
+
+    #[test]
+    fn test_verify_signature() {
+        let text = "hello world";
+        let key = PrivateKey::new();
+        let signature = key.sign(&text);
+        let is_verify = key.public_key.verify(text, signature);
+        assert_eq!(true, is_verify);
     }
 
     fn type_of<T>(_: T) -> &'static str {
