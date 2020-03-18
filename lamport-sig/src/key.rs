@@ -177,6 +177,17 @@ mod tests {
         assert_eq!(true, is_verify);
     }
 
+    #[test]
+    fn test_to_public_key() {
+        let private_key = PrivateKey::new();
+        let public_key = private_key.to_public_key();
+        let mut public_key_pair = Vec::with_capacity(PRIVATE_KEY_LENGT);
+        for i in 0..PRIVATE_KEY_LENGT {
+            public_key_pair.push(pub_key_pair(&private_key.pairs[i].0, &private_key.pairs[i].1));
+        }
+        assert_eq!(public_key_pair, public_key.pairs);
+    }
+
     fn type_of<T>(_: T) -> &'static str {
         type_name::<T>()
     }
