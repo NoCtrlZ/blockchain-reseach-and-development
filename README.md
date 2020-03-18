@@ -16,6 +16,10 @@ Development about p2p client including syncing method with other nodes. Creating
 Integration result of research and development. This behaves as actual blockchain which proofs the ownership of digital contents. So cool!
 ### 🛸lamport-sig
 Development about lamport signature which has tolerance for quantum computer. Generating private key and signing transaction.
+### ☄️wallet
+Development about wallet. Wallet struct including private key, public key and address, and methods including sign, verify and genelate.
+### 👽transaction
+Development about transaction message. Signing transaction with private key, issuing certificate transaction and transfer token transaction, verifying transaction.
 ## Test
 ```
 $ makers ts
