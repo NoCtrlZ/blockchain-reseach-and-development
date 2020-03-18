@@ -1,36 +1,13 @@
-extern crate rsa;
 extern crate rand;
+extern crate bigint;
+extern crate rustc_hex;
 
-mod debug;
-
-use crate::debug::type_of;
-use rsa::{PublicKey, RSAPrivateKey, PaddingScheme};
-use rand::rngs::OsRng;
-use std::str;
-
-#[derive(Debug)]
-struct PrivateKey {
-    rng: OsRng,
-    bits: usize,
-    key: RSAPrivateKey
-}
-
-fn generate_key() -> PrivateKey {
-    let mut rng = OsRng;
-    let bits = 2048;
-    let key = RSAPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
-    PrivateKey {
-        rng: rng,
-        bits: bits,
-        key: key
-    }
-}
+mod key;
 
 fn main() {
-    let mut private_key = generate_key();
-
-    let data = b"hello world";
-    let enc_data = private_key.key.encrypt(&mut private_key.rng, PaddingScheme::PKCS1v15, &data[..]).expect("failed to encrypt");
-    let dec_data = private_key.key.decrypt(PaddingScheme::PKCS1v15, &enc_data).expect("failed to decrypt");
-    println!("{:?}", str::from_utf8(&dec_data).unwrap());
+    let plain_text = "secret message";
+    let private_key = key::PrivateKey::new();
+    let signature = private_key.sign(&plain_text);
+    let public_key = private_key.to_public_key();
+    let is_valid = public_key.verify(plain_text, signature);
 }
