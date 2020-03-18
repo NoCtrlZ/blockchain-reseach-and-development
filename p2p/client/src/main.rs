@@ -1,9 +1,6 @@
-use hyper::{body::HttpBody as _, Client};
+use std::net::TcpStream;
 
-#[tokio::main]
-async fn main() {
-    let client = Client::new();
-    let uri = "http://127.0.0.1:3000".parse().unwrap();
-    let resp = client.get(uri).await.unwrap();
-    println!("Response: {}", resp.status());
+fn main() {
+    let endpoint = "127.0.0.1:9000";
+    let stream = TcpStream::connect(endpoint);
 }

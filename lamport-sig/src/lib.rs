@@ -8,7 +8,7 @@ mod key;
 mod tests {
     use super::*;
     #[test]
-    fn test_private_key_new() {
+    fn test_lamport_signature() {
         let plain_text = "secret message";
         let private_key = key::PrivateKey::new();
         let signature = private_key.sign(&plain_text);
