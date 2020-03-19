@@ -3,6 +3,8 @@ use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
 use rand::Rng;
+use serde_json::json;
+use serde::{Deserialize, Serialize};
 
 use crate::request::Request;
 use crate::response::{Response, prefix};
@@ -12,6 +14,17 @@ pub struct Network {
     endpoint: String,
     nodes: Vec<String>,
     router: Router
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct NetworkInfo {
+    endpoint: String,
+    nodes: Vec<String>
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Add {
+    endpoint: String
 }
 
 impl Network {
@@ -47,17 +60,24 @@ impl Network {
     }
 
     pub fn add(&mut self, req: Request) -> Response {
-        println!("{:?}", req);
+        let body: Add = serde_json::from_str(&req.body).unwrap();
+        println!("{:?}", body);
+        self.nodes.push(body.endpoint);
         Response {
             prefix: prefix::PREFIX.to_string(),
             body: "Ok".to_string()
         }
     }
 
-    pub fn responser(&mut self, req: Request) -> Response {
+    pub fn get_nodes(&mut self, req: Request) -> Response {
+        let info = NetworkInfo {
+            endpoint: self.endpoint.clone(),
+            nodes: self.nodes.clone()
+        };
+        let network = json!(info);
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: "Test".to_string()
+            body: network.to_string()
         }
     }
 }

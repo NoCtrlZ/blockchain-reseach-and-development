@@ -1,4 +1,11 @@
-[tasks.post]
+[tasks.get]
+description = "Http Post Request"
+script = ['''
+#!/usr/bin/env bash
+curl  http://localhost:${@}/
+''']
+
+[tasks.add]
 description = "Http Post Request"
 script = ['''
 #!/usr/bin/env bash
