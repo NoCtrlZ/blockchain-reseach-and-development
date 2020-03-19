@@ -1,48 +1,34 @@
 use rand::seq::SliceRandom;
+use std::net::{TcpListener, TcpStream};
+use rand::Rng;
 
 pub struct Network {
-    host: String,
-    nodes: Vec<Node>
-}
-
-struct Node {
-    id: String,
-    port: u16
+    endpoint: String,
+    nodes: Vec<String>
 }
 
 impl Network {
-    pub fn new() -> Network {
-        let default_host = "127.0.0.1";
-        let default_port = 3000;
+    pub fn new() {
+        let mut default_node = "127.0.0.1:".to_string();
+        default_node.push_str(&random_port());
         let mut network = Network {
-            host: default_host.to_string(),
+            endpoint: default_node,
             nodes: Vec::new()
         };
-        network.nodes.push(Node {
-            id: random_string(),
-            port: default_port
-        });
-        network
+        let listener = TcpListener::bind(&network.endpoint).unwrap();
+        for stream in listener.incoming() {
+            let response = network.handle(&mut stream.unwrap());
+        }
     }
 
-    pub fn endpoint(&self) -> String {
-        let mut endpoint = "".to_string();
-        endpoint.push_str(&self.host);
-        endpoint.push_str(":");
-        endpoint.push_str(&self.nodes[0].port.to_string());
-        endpoint
+    fn handle(&self, stream: &mut TcpStream) {
+        println!("{:?}", stream);
     }
 }
 
-fn random_string() -> String {
-    let base_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes();
-    let mut rng = &mut rand::thread_rng();
-    String::from_utf8(
-        base_str
-            .choose_multiple(&mut rng, 16)
-            .cloned()
-            .collect()
-    ).unwrap()
+pub fn random_port() -> String {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(1024, 9000).to_string()
 }
 
 #[cfg(test)]
