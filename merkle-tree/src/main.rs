@@ -63,6 +63,20 @@ impl Tree {
         }
         self.layer = new_layer;
     }
+
+    fn search(&self, amount: u64, sender: &str, recipient: &str) -> Result<String, bool> {
+        let transaction = json!(Transaction {
+            amount: amount,
+            sender: sender.to_string(),
+            recipient: recipient.to_string()
+        }).to_string();
+        for i in 0..self.leaves.len() {
+            if hash(&transaction) == hash(&self.leaves[i]) {
+                return Ok(self.leaves[i].clone());
+            }
+        }
+        Err(false)
+    }
 }
 
 impl Transactions {
@@ -95,7 +109,8 @@ fn main() {
     let leaves = transactions.transactions_to_leaves();
     let mut tree = Tree::new(leaves);
     let merkle_root = tree.build_tree();
-    println!("{:?}", merkle_root);
+    let target = tree.search(25, "alice", "crea").unwrap();
+    println!("{:?}", target);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
