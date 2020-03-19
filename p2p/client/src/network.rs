@@ -5,7 +5,7 @@ use std::net::TcpStream;
 use rand::Rng;
 
 use crate::request::Request;
-use crate::response;
+use crate::response::{Response, prefix};
 use crate::router::{Router, Handler};
 
 pub struct Network {
@@ -18,6 +18,7 @@ impl Network {
     pub fn new(router: Router) {
         let mut endpoint = "127.0.0.1:".to_string();
         endpoint.push_str(&random_port());
+        println!("{:?}", &endpoint);
         let network = Network {
             endpoint: endpoint,
             nodes: Vec::new(),
@@ -41,8 +42,15 @@ impl Network {
     }
 
     fn response(&self, stream: &mut TcpStream, handler: Handler, req: Request) {
-        let response = (handler)(req);
+        let response = (handler)(self, req);
         response.write(stream);
+    }
+
+    pub fn compiler(&self, req: Request) -> Response {
+        Response {
+            prefix: prefix::PREFIX.to_string(),
+            body: "Test".to_string(),
+        }
     }
 }
 

@@ -6,6 +6,7 @@ use std::net::TcpStream;
 use crate::router;
 use crate::response;
 use crate::request;
+
 #[derive(Debug)]
 pub struct Request {
     pub method: String,
