@@ -1,6 +1,9 @@
 use serde_json::json;
 use serde::{Deserialize, Serialize};
+use crypto::sha2::Sha256;
+use crypto::digest::Digest;
 
+#[derive(Debug)]
 struct Tree {
     leaves: Vec<String>,
     layer: Vec<String>,
@@ -25,6 +28,19 @@ impl Tree {
             leaves: transactions.clone(),
             layer: transactions.clone(),
             root: "".to_string()
+        }
+    }
+
+    fn build_layer(&mut self) {
+        if self.layer.len() % 2 == 1 {
+            self.layer.push(self.layer.last().unwrap().to_string());
+        }
+
+        for i in 0..self.layer.len() / 2 {
+            let left = hash(&self.layer[i * 2]);
+            let right = hash(&self.layer[(i * 2) + 1]);
+            println!("{:?}", left);
+            println!("{:?}", right);
         }
     }
 }
@@ -57,7 +73,9 @@ fn main() {
     let mut transactions = Transactions::new();
     send_transactions(&mut transactions);
     let leaves = transactions.transactions_to_leaves();
-    println!("{:?}", leaves);
+    let mut tree = Tree::new(leaves);
+    println!("{:?}", tree);
+    tree.build_layer()
 }
 
 fn send_transactions(transactions: &mut Transactions) {
@@ -71,4 +89,10 @@ fn send_transactions(transactions: &mut Transactions) {
     transactions.send_transaction(12, "alice", "crea");
     transactions.send_transaction(100, "bod", "crea");
     transactions.send_transaction(100, "leon", "jack");
+}
+
+fn hash(transaction: &str) -> String {
+    let mut sha256 = Sha256::new();
+    sha256.input_str(&transaction);
+    sha256.result_str()
 }
