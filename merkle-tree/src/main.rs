@@ -22,6 +22,17 @@ struct Transaction {
     recipient: String
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct Node {
+    left: String,
+    right: String,
+    parent: String,
+    sibling: String,
+    position: String,
+    data: String,
+    hash: String
+}
+
 impl Tree {
     fn new(transactions: Vec<String>) -> Tree {
         Tree {
@@ -31,7 +42,15 @@ impl Tree {
         }
     }
 
+    fn build_tree(&mut self) -> String {
+        while self.layer.len() != 1 {
+            self.build_layer();
+        }
+        self.layer[0].clone()
+    }
+
     fn build_layer(&mut self) {
+        let mut new_layer = Vec::new();
         if self.layer.len() % 2 == 1 {
             self.layer.push(self.layer.last().unwrap().to_string());
         }
@@ -39,9 +58,10 @@ impl Tree {
         for i in 0..self.layer.len() / 2 {
             let left = hash(&self.layer[i * 2]);
             let right = hash(&self.layer[(i * 2) + 1]);
-            println!("{:?}", left);
-            println!("{:?}", right);
+            let parent = hash(&format!("{}{}", &left, &right).to_string());
+            new_layer.push(parent);
         }
+        self.layer = new_layer;
     }
 }
 
@@ -74,8 +94,8 @@ fn main() {
     send_transactions(&mut transactions);
     let leaves = transactions.transactions_to_leaves();
     let mut tree = Tree::new(leaves);
-    println!("{:?}", tree);
-    tree.build_layer()
+    let merkle_root = tree.build_tree();
+    println!("{:?}", merkle_root);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
