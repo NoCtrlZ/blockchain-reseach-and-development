@@ -1,7 +1,15 @@
-mod network;
 extern crate rand;
-use std::net::TcpStream;
+mod request;
+mod router;
+mod network;
+mod response;
+
+use request::Request;
+use router::Router;
+use network::Network;
 
 fn main() {
-    let network = network::Network::new();
+    let mut router = Router::new();
+    router.get("/", Request::index_handler);
+    Network::new(router)
 }
