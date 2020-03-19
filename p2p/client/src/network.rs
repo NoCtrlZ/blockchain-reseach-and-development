@@ -19,7 +19,7 @@ impl Network {
         let mut endpoint = "127.0.0.1:".to_string();
         endpoint.push_str(&random_port());
         println!("{:?}", &endpoint);
-        let network = Network {
+        let mut network = Network {
             endpoint: endpoint,
             nodes: Vec::new(),
             router: router
@@ -30,7 +30,7 @@ impl Network {
         }
     }
 
-    fn handle(&self, stream: &mut TcpStream) {
+    fn handle(&mut self, stream: &mut TcpStream) {
         let req = Request::parse(stream);
         // println!("{:?}", self.router.routes[0].path);
         for route in &self.router.routes {
@@ -41,15 +41,23 @@ impl Network {
         }
     }
 
-    fn response(&self, stream: &mut TcpStream, handler: Handler, req: Request) {
+    fn response(&mut self, stream: &mut TcpStream, handler: Handler, req: Request) {
         let response = (handler)(self, req);
         response.write(stream);
     }
 
-    pub fn compiler(&self, req: Request) -> Response {
+    pub fn add(&mut self, req: Request) -> Response {
+        println!("{:?}", req);
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: "Test".to_string(),
+            body: "Ok".to_string()
+        }
+    }
+
+    pub fn responser(&mut self, req: Request) -> Response {
+        Response {
+            prefix: prefix::PREFIX.to_string(),
+            body: "Test".to_string()
         }
     }
 }

@@ -1,13 +1,12 @@
-use crate::request::Request;
-use crate::response::Response;
-use crate::network::Network;
+use crate::request;
+use crate::response;
 
 pub mod method {
     pub const GET: &str = "GET";
     pub const POST: &str = "POST";
 }
 
-pub type Handler = fn(&mut Network, Request) -> Response;
+pub type Handler = fn(request::Request) -> response::Response;
 
 pub struct Route {
     pub path: String,

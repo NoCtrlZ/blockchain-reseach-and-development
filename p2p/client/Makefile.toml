@@ -1,0 +1,6 @@
+[tasks.post]
+description = "Http Post Request"
+script = ['''
+#!/usr/bin/env bash
+curl -d '{"endpoint":"127.0.0.1:5000"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/add
+''']

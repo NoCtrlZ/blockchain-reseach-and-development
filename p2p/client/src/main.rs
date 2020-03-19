@@ -10,6 +10,7 @@ use network::Network;
 
 fn main() {
     let mut router = Router::new();
-    router.get("/", Network::compiler);
+    router.get("/", Network::responser);
+    router.get("/add", Network::add);
     Network::new(router)
 }
