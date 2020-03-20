@@ -1,12 +1,19 @@
 # Blockchain Research And Development
 ![badge](https://action-badges.now.sh/NoCtrlZ/blockchain-reseach-and-development?action=test)   
 This is research and development for blockchain implementation from scratch.
-## Setup
-```
-$ makers it
-```
 ## Abstract
 Creating blockchain proofs the ownership of digital contents with cool way! With this blockchain, all developer can create Dapp with no knowledge about blockchain by just installing wrapper module. It can have an impact on both art and blockchain industry. Next age comming soon😎
+## Start
+```
+$ cd integration
+$ cargo install --force cargo-make
+$ makers run
+```
+You can access blockchain information on [`http://localhost:3000`](http://localhost:3000).  
+- Send Transaction  
+```$ makers tx```
+- Create New Block  
+```$ makers new```
 ## Progress
 - 🥚 0~30%
 - 🐥 31~60%
