@@ -19,6 +19,7 @@ pub struct Transaction {
     recipient: String
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 struct Add {
     endpoint: String
 }
@@ -62,6 +63,15 @@ fn post_transaction(endpoint: &str, transaction: Transaction) -> String {
     throw_request(endpoint, request)
 }
 
+fn post_node(endpoint: &str, node: Add) -> String {
+    let request = Request {
+        method: method::POST.to_string(),
+        path: "/add".to_string(),
+        body: json!(node).to_string()
+    };
+    throw_request(endpoint, request)
+}
+
 fn send_transaction(endpoint: &str, amount: u64, sender: &str, recipient: &str) -> String {
     post_transaction(endpoint, Transaction {
         amount: amount,
@@ -79,7 +89,13 @@ fn create_new_block(endpoint: &str) -> String {
     throw_request(endpoint, request)
 }
 
-fn main() {
+fn add_node_to_network(endpoint: &str, node: &str) -> String {
+    post_node(endpoint, Add {
+        endpoint: node.to_string()
+    })
+}
+
+fn blockchain_client() {
     let endpoint = "127.0.0.1:3000";
     let res1 = get_blockchain(endpoint);
     println!("{:?}", res1);
@@ -87,4 +103,10 @@ fn main() {
     println!("{:?}", res2);
     let res3 = create_new_block(endpoint);
     println!("{:?}", res3);
+
+}
+
+fn main() {
+    let res4 = add_node_to_network("127.0.0.1:3347", "127.0.0.1:5000");
+    println!("{:?}", res4);
 }
