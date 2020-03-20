@@ -69,7 +69,7 @@ impl Blockchain {
         blockchain.to_string()
     }
 
-    pub fn proof_of_work(&mut self) -> u64 {
+    pub fn proof_of_work(&mut self) -> Block {
         // println!("proof of work");
         let current_block_hash = self.block_hash();
         // println!("block hash");
@@ -84,11 +84,10 @@ impl Blockchain {
             }
             nonce+=1;
         }
-        self.create_new_block(nonce);
-        nonce
+        self.create_new_block(nonce)
     }
 
-    pub fn create_new_block(&mut self, nonce: u64) {
+    pub fn create_new_block(&mut self, nonce: u64) -> Block {
         let block = Block {
             index: *&self.entity.len() as u32,
             timestamp: current_time(),
@@ -97,8 +96,10 @@ impl Blockchain {
             hash: self.block_hash(),
             previous_hash: (&self.latest_block_hash()).to_string()
         };
+        let block_log = block.clone();
         self.entity.push(block);
         self.transactions.clear();
+        block_log
     }
 
     pub fn difficulty_checker(&self) -> String {

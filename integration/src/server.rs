@@ -72,10 +72,10 @@ impl Server {
 
     pub fn create_new_block(&mut self, req: Request) -> Response {
         // println!("create new block");
-        let nonce = self.blockchain.proof_of_work();
+        let block = self.blockchain.proof_of_work();
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: format!("nonce is {}", nonce.to_string()).to_string()
+            body: json!(block).to_string()
         }
     }
 
