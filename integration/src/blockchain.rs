@@ -17,7 +17,7 @@ pub struct Block {
     index: u32,
     timestamp: u64,
     transactions: Vec<Transaction>,
-    nonce: u128,
+    nonce: u64,
     hash: String,
     previous_hash: String
 }
@@ -41,7 +41,7 @@ impl Blockchain {
         blockchain
     }
 
-    fn create_genesis_block(&mut self) {
+    pub fn create_genesis_block(&mut self) {
         let block = Block {
             index: 0,
             timestamp: current_time(),
@@ -63,14 +63,19 @@ impl Blockchain {
     }
 
     pub fn blockchain_json(&self) -> String {
+        println!("blockchain json");
         let blockchain = json!(&self);
+        println!("blockchain json done");
         blockchain.to_string()
     }
 
-    pub fn proof_of_work(&mut self) -> u128 {
+    pub fn proof_of_work(&mut self) -> u64 {
+        println!("proof of work");
         let current_block_hash = self.block_hash();
+        println!("block hash");
         let previous_block_hash = self.latest_block_hash();
-        let mut nonce: u128 = 0;
+        println!("latest block hash");
+        let mut nonce: u64 = 0;
         let start_with = self.difficulty_checker();
         loop {
             let hash = sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
@@ -83,7 +88,7 @@ impl Blockchain {
         nonce
     }
 
-    pub fn create_new_block(&mut self, nonce: u128) {
+    pub fn create_new_block(&mut self, nonce: u64) {
         let block = Block {
             index: *&self.entity.len() as u32,
             timestamp: current_time(),

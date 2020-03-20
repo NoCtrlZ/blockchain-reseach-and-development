@@ -32,6 +32,7 @@ impl Server {
         let original_node = Node {
             port: default_port
         };
+        server.blockchain.create_genesis_block();
         server.network.nodes.push(original_node);
         server
     }
@@ -46,6 +47,7 @@ impl Server {
 
     fn handle(&mut self, stream: &mut TcpStream) {
         let req = Request::parse(stream);
+        println!("{:?}", req);
         for route in &self.router.routes {
             if route.method == req.method && route.path == req.path {
                 self.response(stream, route.handler, req);
@@ -55,6 +57,7 @@ impl Server {
     }
 
     fn response(&mut self, stream: &mut TcpStream, handler: Handler, req: Request) {
+        println!("response");
         let response = handler(self, req);
         response.write(stream);
     }
@@ -62,7 +65,7 @@ impl Server {
     pub fn index_handler(&mut self, req: Request) -> Response {
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: "test".to_string(),
+            body: "test".to_string()
         }
     }
 
@@ -70,7 +73,16 @@ impl Server {
         let whole_blockchain = self.blockchain.blockchain_json();
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: whole_blockchain.to_string(),
+            body: whole_blockchain.to_string()
+        }
+    }
+
+    pub fn create_new_block(&mut self, req: Request) -> Response {
+        println!("create new block");
+        let nonce = self.blockchain.proof_of_work();
+        Response {
+            prefix: prefix::PREFIX.to_string(),
+            body: format!("nonce is {}", nonce.to_string()).to_string()
         }
     }
 
@@ -81,7 +93,7 @@ impl Server {
         self.blockchain.transactions.push(transaction);
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: "hi".to_string(),
+            body: "hi".to_string()
         }
     }
 }
