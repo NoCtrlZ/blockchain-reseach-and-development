@@ -1,6 +1,6 @@
 use std::net::TcpListener;
 use std::net::TcpStream;
-
+use serde_json::json;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Transaction};
@@ -47,7 +47,7 @@ impl Server {
 
     fn handle(&mut self, stream: &mut TcpStream) {
         let req = Request::parse(stream);
-        println!("{:?}", req);
+        // println!("{:?}", req);
         for route in &self.router.routes {
             if route.method == req.method && route.path == req.path {
                 self.response(stream, route.handler, req);
@@ -57,19 +57,12 @@ impl Server {
     }
 
     fn response(&mut self, stream: &mut TcpStream, handler: Handler, req: Request) {
-        println!("response");
+        // println!("response");
         let response = handler(self, req);
         response.write(stream);
     }
 
-    pub fn index_handler(&mut self, req: Request) -> Response {
-        Response {
-            prefix: prefix::PREFIX.to_string(),
-            body: "test".to_string()
-        }
-    }
-
-    pub fn check_all_handler(&mut self, req: Request) -> Response {
+    pub fn get_blockchain(&mut self, req: Request) -> Response {
         let whole_blockchain = self.blockchain.blockchain_json();
         Response {
             prefix: prefix::PREFIX.to_string(),
@@ -78,7 +71,7 @@ impl Server {
     }
 
     pub fn create_new_block(&mut self, req: Request) -> Response {
-        println!("create new block");
+        // println!("create new block");
         let nonce = self.blockchain.proof_of_work();
         Response {
             prefix: prefix::PREFIX.to_string(),
@@ -87,13 +80,14 @@ impl Server {
     }
 
     pub fn send_transaction(&mut self, req: Request) -> Response {
-        println!("{:?}", req);
+        // println!("{:?}", req);
         let transaction: Transaction = serde_json::from_str(&req.body).unwrap();
-        println!("{:?}", transaction);
+        // println!("{:?}", transaction);
+        let transaction_json = json!(&transaction);
         self.blockchain.transactions.push(transaction);
         Response {
             prefix: prefix::PREFIX.to_string(),
-            body: "hi".to_string()
+            body: transaction_json.to_string()
         }
     }
 }

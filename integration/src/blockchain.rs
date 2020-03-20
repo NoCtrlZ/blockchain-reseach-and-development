@@ -63,18 +63,18 @@ impl Blockchain {
     }
 
     pub fn blockchain_json(&self) -> String {
-        println!("blockchain json");
+        // println!("blockchain json");
         let blockchain = json!(&self);
-        println!("blockchain json done");
+        // println!("blockchain json done");
         blockchain.to_string()
     }
 
     pub fn proof_of_work(&mut self) -> u64 {
-        println!("proof of work");
+        // println!("proof of work");
         let current_block_hash = self.block_hash();
-        println!("block hash");
+        // println!("block hash");
         let previous_block_hash = self.latest_block_hash();
-        println!("latest block hash");
+        // println!("latest block hash");
         let mut nonce: u64 = 0;
         let start_with = self.difficulty_checker();
         loop {

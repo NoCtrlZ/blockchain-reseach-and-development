@@ -16,13 +16,13 @@ pub struct Request {
 impl Request {
     pub fn parse(stream: &mut TcpStream) -> Request {
         let raw_data = convert(stream);
-        println!("{:?}", raw_data);
+        // println!("{:?}", raw_data);
         let (prefix, header, body) = divide(&raw_data);
-        println!("success divide");
+        // println!("success divide");
         let (method, path) = Request::parse_prefix(&prefix);
-        println!("success parse prefix");
+        // println!("success parse prefix");
         let header = Request::parse_header(&header);
-        println!("success parse header");
+        // println!("success parse header");
         Request {
             method: method,
             path: path,
@@ -73,12 +73,12 @@ fn convert(stream: &mut TcpStream) -> String {
 fn divide(raw_data: &str) -> (String, String, String) {
     let mut components: Vec<&str> = raw_data.split("\r\n\r\n").collect();
     if components.len() > 2 {
-        println!("{:?}", components.len());
+        // println!("{:?}", components.len());
         panic!("Invalid request data");
     }
     if components.len() == 1 {
         components.push("");
-        println!("{:?}", components.len());
+        // println!("{:?}", components.len());
     }
     let (prefix, header) = divide_none_body(components[0]);
     (prefix, header, components[1].to_string())

@@ -12,8 +12,7 @@ use router::Router;
 
 fn set_router() -> Router {
     let mut router = Router::new();
-    router.get("/", Server::index_handler);
-    router.get("/whole_blockchain", Server::check_all_handler);
+    router.get("/", Server::get_blockchain);
     router.get("/create_new_block", Server::create_new_block);
     router.post("/send_transaction", Server::send_transaction);
     router

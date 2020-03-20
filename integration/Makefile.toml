@@ -1,8 +1,15 @@
+[tasks.run]
+description = "Start Blockchain Server"
+script = ['''
+#!/usr/bin/env bash
+cargo run
+''']
+
 [tasks.get]
 description = "Http Post Request"
 script = ['''
 #!/usr/bin/env bash
-curl  http://localhost:3000${@}
+curl  http://localhost:3000/
 ''']
 
 [tasks.tx]
@@ -16,5 +23,5 @@ curl -d '{"amount": 100, "sender":"alice", "recipient":"bob"}' -H "Content-Type:
 description = "Create New Block"
 script = ['''
 #!/usr/bin/env bash
-curl  http://localhost:3000/create_new_block -H "Content-Type: application/json"
+curl  http://localhost:3000/create_new_block
 ''']

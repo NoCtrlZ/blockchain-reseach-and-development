@@ -12,9 +12,13 @@ pub struct Response {
 
 impl Response {
     pub fn write(&self, stream: &mut TcpStream) {
-        println!("response writer");
-        let response = &self.body;
-        println!("{:?}", response);
+        // println!("response writer");
+        let body = &self.body;
+        let contents_length = &self.body.len().to_string();
+        // println!("{:?}", response);
+        let mut response = prefix::PREFIX.to_string();
+        response.push_str(contents_length);
+        response.push_str(&format!("{}{}", "\r\n\r\n", body));
         stream
             .write(response.as_bytes())
             .unwrap();
