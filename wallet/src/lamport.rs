@@ -36,7 +36,7 @@ impl Wallet {
             public_key_string.push_str(&encode(uint256_to_string(&adam, &eve).as_bytes()));
             prv_pairs.push((adam, eve));
         }
-        let address = encode(sha256_hash(&public_key_string).to_string());
+        let address = sha256_hash(&public_key_string).to_hex();
         Wallet {
             private_key: PrivateKey {
                 pairs: prv_pairs
