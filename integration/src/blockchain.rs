@@ -103,34 +103,6 @@ impl Blockchain {
         }
         start_with
     }
-
-    pub fn index_handler(&mut self, req: request::Request) -> response::Response {
-        response::Response {
-            prefix: response::prefix::PREFIX.to_string(),
-            body: "test".to_string(),
-        }
-    }
-
-    pub fn check_all_handler(&mut self, req: request::Request) -> response::Response {
-        let whole_blockchain = self.blockchain_json();
-        println!("{:?}", self);
-        response::Response {
-            prefix: response::prefix::PREFIX.to_string(),
-            body: whole_blockchain.to_string(),
-        }
-    }
-
-    pub fn send_transaction(&mut self, req: request::Request) -> response::Response {
-        println!("{:?}", req);
-        let transaction: Transaction = serde_json::from_str(&req.body).unwrap();
-        println!("{:?}", transaction);
-        self.transactions.push(transaction);
-        println!("{:?}", self);
-        response::Response {
-            prefix: response::prefix::PREFIX.to_string(),
-            body: "hi".to_string(),
-        }
-    }
 }
 
 #[cfg(test)]

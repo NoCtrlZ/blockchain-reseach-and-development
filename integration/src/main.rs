@@ -7,15 +7,17 @@ mod router;
 mod server;
 mod response;
 
+use server::Server;
+
 fn set_router() -> router::Router {
     let mut router = router::Router::new();
-    router.get("/", blockchain::Blockchain::index_handler);
-    router.get("/whole_blockchain", blockchain::Blockchain::check_all_handler);
-    router.post("/send_transaction", blockchain::Blockchain::send_transaction);
+    router.get("/", Server::index_handler);
+    router.get("/whole_blockchain", Server::check_all_handler);
+    router.post("/send_transaction", Server::send_transaction);
     router
 }
 
 fn main() {
     let router = set_router();
-    server::Server::new(router).start();
+    Server::new(router).start();
 }

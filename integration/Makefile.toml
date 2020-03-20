@@ -1,0 +1,13 @@
+[tasks.get]
+description = "Http Post Request"
+script = ['''
+#!/usr/bin/env bash
+curl  http://localhost:3000${@}
+''']
+
+[tasks.tx]
+description = "Send Transaction"
+script = ['''
+#!/usr/bin/env bash
+curl -d '{"amount": 100, "sender":"alice", "recipient":"bob"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/send_transaction
+''']
