@@ -5,8 +5,8 @@ use crypto::digest::Digest;
 
 #[derive(Debug)]
 struct Tree {
-    leaves: Vec<String>,
-    layer: Vec<String>,
+    leaves: Vec<Node>,
+    layer: Vec<Node>,
     root: String
 }
 
@@ -22,11 +22,11 @@ struct Transaction {
     recipient: String
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 struct Node {
-    left: String,
-    right: String,
-    parent: String,
+    left: Box<Option<Node>>,
+    right: Box<Option<Node>>,
+    parent: Box<Option<Node>>,
     sibling: String,
     position: String,
     data: String,
@@ -35,9 +35,21 @@ struct Node {
 
 impl Tree {
     fn new(transactions: Vec<String>) -> Tree {
+        let mut leaves = Vec::new();
+        for i in 0..transactions.len() {
+            leaves.push(Node {
+                left: Box::new(None),
+                right: Box::new(None),
+                parent: Box::new(None),
+                sibling: "".to_string(),
+                position: "".to_string(),
+                data: transactions[i].to_string(),
+                hash: hash(&transactions[i]).to_string(),
+            })
+        }
         Tree {
-            leaves: transactions.clone(),
-            layer: transactions.clone(),
+            leaves: leaves.clone(),
+            layer: leaves,
             root: "".to_string()
         }
     }
@@ -46,32 +58,40 @@ impl Tree {
         while self.layer.len() != 1 {
             self.build_layer();
         }
-        self.layer[0].clone()
+        self.layer[0].hash.clone()
     }
 
     fn build_layer(&mut self) {
         let mut new_layer = Vec::new();
         if self.layer.len() % 2 == 1 {
-            self.layer.push(self.layer.last().unwrap().to_string());
+            self.layer.push(self.layer.last().unwrap().clone());
         }
 
         for i in 0..self.layer.len() / 2 {
-            let left = hash(&self.layer[i * 2]);
-            let right = hash(&self.layer[(i * 2) + 1]);
-            let parent = hash(&format!("{}{}", &left, &right).to_string());
+            let mut left = self.layer[i * 2].clone();
+            let mut right = self.layer[(i * 2) + 1].clone();
+            let parent = Node {
+                left: Box::new(None),
+                right: Box::new(None),
+                parent: Box::new(None),
+                sibling: "".to_string(),
+                position: "".to_string(),
+                data: format!("{}{}", &left.hash, &right.hash).to_string(),
+                hash: hash(&format!("{}{}", &left.hash, &right.hash).to_string())
+            };
             new_layer.push(parent);
         }
         self.layer = new_layer;
     }
 
-    fn search(&self, amount: u64, sender: &str, recipient: &str) -> Result<String, bool> {
+    fn search(&self, amount: u64, sender: &str, recipient: &str) -> Result<Node, bool> {
         let transaction = json!(Transaction {
             amount: amount,
             sender: sender.to_string(),
             recipient: recipient.to_string()
         }).to_string();
         for i in 0..self.leaves.len() {
-            if hash(&transaction) == hash(&self.leaves[i]) {
+            if hash(&transaction) == self.leaves[i].hash {
                 return Ok(self.leaves[i].clone());
             }
         }
