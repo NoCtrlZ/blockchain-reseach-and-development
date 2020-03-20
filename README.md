@@ -7,6 +7,23 @@ $ makers it
 ```
 ## Abstract
 Creating blockchain proofs the ownership of digital contents with cool way! With this blockchain, all developer can create Dapp with no knowledge about blockchain by just installing wrapper module. It can have an impact on both art and blockchain industry. Next age comming soon😎
+## Progress
+- 🥚: 0..30%
+- 🐥:31..60%
+- 🐓:61..90%
+- 🍗:91%..
+
+Component | R&D | Integrate
+:------------ | :-------------| :-------------
+Proof Of Work|🍗|🍗
+Adjustment Difficultty|🥚|🥚
+Lamport Signature|🍗|🥚
+Merkle Tree|🐓|🥚
+P2P Network|🐓|🐥
+Wallet|🍗|🥚
+Block Structure|🐓|🐓
+Transaction Structure|🐓|🐥
+UTXO|🥚|🥚
 ## Directory
 ### 🛰️blockchain
 Development about blockchain data structure including struct of `blockchain` itself, `block` and `transaction`. Also has methods to chage the data structure like `create_new_block`, `send_transaction`, `proof_of_work` and so on.
