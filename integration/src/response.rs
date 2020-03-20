@@ -1,9 +1,7 @@
 use std::io::Write;
 use std::net::TcpStream;
 
-pub mod prefix {
-    pub const PREFIX: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ";
-}
+pub const PREFIX: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ";
 
 pub struct Response {
     pub prefix: String,
@@ -14,7 +12,7 @@ impl Response {
     pub fn write(&self, stream: &mut TcpStream) {
         // println!("response writer");
         let body = &self.body;
-        let mut response = default_response(&self.body.len());
+        let mut response = default_response(&self.prefix, &self.body.len());
         // println!("{:?}", response);
         response.push_str(&format!("{}{}", "\r\n\r\n", body));
         stream.write(response.as_bytes()).unwrap();
@@ -22,8 +20,8 @@ impl Response {
     }
 }
 
-fn default_response(contents_length: &usize) -> String {
-    let mut response = prefix::PREFIX.to_string();
+fn default_response(prefix: &str, contents_length: &usize) -> String {
+    let mut response = prefix.to_string();
     response.push_str(&contents_length.to_string());
     response
 }

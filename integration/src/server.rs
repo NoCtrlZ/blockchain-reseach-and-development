@@ -5,7 +5,7 @@ use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Transaction};
 use crate::p2p::{Network, Node};
-use crate::response::{Response, prefix};
+use crate::response::{Response, PREFIX};
 
 pub struct Server {
     router: Router,
@@ -65,7 +65,7 @@ impl Server {
     pub fn get_blockchain(&mut self, req: Request) -> Response {
         let whole_blockchain = self.blockchain.blockchain_json();
         Response {
-            prefix: prefix::PREFIX.to_string(),
+            prefix: PREFIX.to_string(),
             body: whole_blockchain.to_string()
         }
     }
@@ -74,7 +74,7 @@ impl Server {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
         Response {
-            prefix: prefix::PREFIX.to_string(),
+            prefix: PREFIX.to_string(),
             body: json!(block).to_string()
         }
     }
@@ -86,7 +86,7 @@ impl Server {
         let transaction_json = json!(&transaction);
         self.blockchain.transactions.push(transaction);
         Response {
-            prefix: prefix::PREFIX.to_string(),
+            prefix: PREFIX.to_string(),
             body: transaction_json.to_string()
         }
     }
