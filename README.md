@@ -2,7 +2,7 @@
 ![badge](https://action-badges.now.sh/NoCtrlZ/blockchain-reseach-and-development?action=test)   
 This is research and development for blockchain implementation from scratch.
 ## Abstract
-Creating blockchain proofs the ownership of digital contents with cool way! With this blockchain, all developer can create Dapp with no knowledge about blockchain by just installing wrapper module. It can have an impact on both art and blockchain industry. Next age comming soon😎
+Creating blockchain proofs the ownership of digital contents with cool way! This blockchain allows all developer to create Dapp with no knowledge about blockchain by just installing wrapper module. This has a revolutionary impact on both creator and blockchain industry. Next age comming soon😎
 ## Start
 ```
 $ cd integration

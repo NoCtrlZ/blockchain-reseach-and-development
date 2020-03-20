@@ -3,11 +3,18 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
+use base64::encode;
+
+#[derive(Debug, Clone)]
+pub struct Wallet {
+    pub private_key: PrivateKey,
+    pub public_key: PublicKey,
+    pub address: String
+}
 
 #[derive(Debug, Clone)]
 pub struct PrivateKey {
-    pub pairs: Vec<(U256, U256)>,
-    pub public_key: PublicKey
+    pub pairs: Vec<(U256, U256)>
 }
 
 #[derive(Debug, Clone)]
@@ -18,20 +25,26 @@ pub struct PublicKey {
 pub static PRIVATE_KEY_LENGT: usize = 256;
 pub static SIGNATURE_LENGT: usize = 256;
 
-impl PrivateKey {
-    pub fn new() -> PrivateKey {
+impl Wallet {
+    pub fn new() -> Wallet {
         let mut prv_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
         let mut pub_pairs = Vec::with_capacity(PRIVATE_KEY_LENGT);
+        let mut public_key_string = "".to_string();
         for _i in 0..PRIVATE_KEY_LENGT {
             let (adam, eve) = prv_key_pair();
             pub_pairs.push(pub_key_pair(&adam, &eve));
+            public_key_string.push_str(&encode(uint256_to_string(&adam, &eve).as_bytes()));
             prv_pairs.push((adam, eve));
         }
-        PrivateKey {
-            pairs: prv_pairs,
+        let address = sha256_hash(&public_key_string).to_hex();
+        Wallet {
+            private_key: PrivateKey {
+                pairs: prv_pairs
+            },
             public_key: PublicKey {
                 pairs: pub_pairs
-            }
+            },
+            address: address
         }
     }
 
@@ -40,16 +53,20 @@ impl PrivateKey {
         let mut signature = Vec::with_capacity(SIGNATURE_LENGT);
         for i in 0..SIGNATURE_LENGT {
             match message.chars().nth(i).unwrap() {
-                '1' => { signature.push(self.pairs[i].0) }
-                '0' => { signature.push(self.pairs[i].1) }
+                '1' => { signature.push(self.private_key.pairs[i].0) }
+                '0' => { signature.push(self.private_key.pairs[i].1) }
                 _ => panic!("this is not binary")
             }
         }
         signature
     }
 
-    pub fn to_public_key(&self) -> PublicKey {
+    pub fn get_public_key(&self) -> PublicKey {
         self.public_key.clone()
+    }
+
+    pub fn get_address(&self) -> String {
+        self.address.clone()
     }
 }
 
@@ -136,6 +153,16 @@ fn compare_with_pub(signature: U256, pub_key: U256) -> bool {
     sha256_hash(&signature.to_string()) == pub_key
 }
 
+fn uint256_to_string(adam: &U256, eve: &U256) -> String {
+    format!("{}{}", adam.to_string(), eve.to_string())
+}
+
+pub fn sha256(target: &str) -> String {
+    let mut sha256 = Sha256::new();
+    sha256.input_str(&target);
+    sha256.result_str()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -163,27 +190,27 @@ mod tests {
     #[test]
     fn test_sign_message() {
         let text = "hello world";
-        let key = PrivateKey::new();
-        let signature = key.sign(&text);
+        let wallet = Wallet::new();
+        let signature = wallet.sign(&text);
         assert_eq!(SIGNATURE_LENGT, signature.len());
     }
 
     #[test]
     fn test_verify_signature() {
         let text = "hello world";
-        let key = PrivateKey::new();
-        let signature = key.sign(&text);
-        let is_verify = key.public_key.verify(text, signature);
+        let wallet = Wallet::new();
+        let signature = wallet.sign(&text);
+        let is_verify = wallet.public_key.verify(text, signature);
         assert_eq!(true, is_verify);
     }
 
     #[test]
     fn test_to_public_key() {
-        let private_key = PrivateKey::new();
-        let public_key = private_key.to_public_key();
+        let wallet= Wallet::new();
+        let public_key = wallet.get_public_key();
         let mut public_key_pair = Vec::with_capacity(PRIVATE_KEY_LENGT);
         for i in 0..PRIVATE_KEY_LENGT {
-            public_key_pair.push(pub_key_pair(&private_key.pairs[i].0, &private_key.pairs[i].1));
+            public_key_pair.push(pub_key_pair(&wallet.private_key.pairs[i].0, &wallet.private_key.pairs[i].1));
         }
         assert_eq!(public_key_pair, public_key.pairs);
     }
