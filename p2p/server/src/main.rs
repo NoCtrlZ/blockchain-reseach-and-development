@@ -1,17 +1,16 @@
 extern crate rand;
-use rand::Rng;
 mod request;
 mod router;
-mod server;
+mod network;
 mod response;
 
-fn random_port() -> u16 {
-    let mut rng = rand::thread_rng();
-    rng.gen_range(1024, 9000)
-}
+use request::Request;
+use router::Router;
+use network::Network;
 
 fn main() {
-    let mut router = router::Router::new();
-    router.get("/", request::Request::index_handler);
-    server::Server::new(router).start("127.0.0.1:5000")
+    let mut router = Router::new();
+    router.get("/", Network::get_nodes);
+    router.post("/add", Network::add);
+    Network::new(router)
 }
