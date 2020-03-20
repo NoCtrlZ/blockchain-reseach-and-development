@@ -1,43 +1,13 @@
-[tasks.bc]
+[tasks.it]
 description = "Start Blockchain Server"
-script = ['''
-#!/usr/bin/env bash
-cd blockchain && cargo run src/main.rs
-''']
-
-[tasks.ts]
-description = "Test Blockchain Function"
 script = ['''
 #!/usr/bin/env bash
 (cd blockchain && cargo test)
 (cd integration && cargo test)
 (cd lamport-sig && cargo test)
-''']
-
-[tasks.it]
-description = "Start Integrated Blockchain"
-script = ['''
-#!/usr/bin/env bash
-cd integration && cargo run
-''']
-
-[tasks.get]
-description = "Http Get Request"
-script = ['''
-#!/usr/bin/env bash
-curl http://localhost:3000${@}
-''']
-
-[tasks.post]
-description = "Http Post Request"
-script = ['''
-#!/usr/bin/env bash
-curl -d '{"hobby":"rock", "life":"rock"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/check_all
-''']
-
-[tasks.tx]
-description = "Send Transaction"
-script = ['''
-#!/usr/bin/env bash
-curl -d '{"amount": 100, "sender":"alice", "recipient":"bob"}' -H "Content-Type: application/json" -X POST http://localhost:${@}/send_transaction
+(cd merkle-tree && cargo test)
+(cd p2p/client && cargo test)
+(cd p2p/server && cargo test)
+(cd transaction && cargo test)
+(cd wallet && cargo test)
 ''']

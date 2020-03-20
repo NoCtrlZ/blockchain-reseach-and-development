@@ -126,16 +126,6 @@ mod tests {
     }
 
     #[test]
-    fn test_send_transaction() {
-        let mut blockchain = Blockchain::new();
-        let result = blockchain.send_transaction(100, "alice", "bob");
-        assert_eq!(blockchain.transactions[0].amount, 100);
-        assert_eq!(blockchain.transactions[0].sender, "alice");
-        assert_eq!(blockchain.transactions[0].recipient, "bob");
-        assert_eq!(result, true);
-    }
-
-    #[test]
     fn test_get_previous_hash() {
         let blockchain = Blockchain::new();
         let previous_hash = blockchain.latest_block_hash();

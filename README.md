@@ -48,5 +48,5 @@ Development about transaction message. Signing transaction with private key, iss
 Development about merkle tree which is data structure enables us to summarize and verify the transactions. Wallet has summarized transactions and checks whether they are altered.
 ## Test
 ```
-$ makers ts
+$ makers it
 ```
