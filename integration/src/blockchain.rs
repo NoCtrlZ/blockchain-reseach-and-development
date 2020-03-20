@@ -1,6 +1,6 @@
 use serde_json::json;
 use serde::{Deserialize, Serialize};
-use crate::unit;
+use crate::unit::{current_time, transactions_hash, sha256_hash};
 use crate::response;
 use crate::request;
 use crate::debug::*;
@@ -44,7 +44,7 @@ impl Blockchain {
     fn create_genesis_block(&mut self) {
         let block = Block {
             index: 0,
-            timestamp: unit::current_time(),
+            timestamp: current_time(),
             transactions: [].to_vec(),
             nonce: 0,
             hash: "genesis block".to_string(),
@@ -59,7 +59,7 @@ impl Blockchain {
 
     pub fn block_hash(&self) -> String {
         let transactions = json!(self.transactions);
-        unit::transactions_hash(&transactions[0].to_string())
+        transactions_hash(&transactions[0].to_string())
     }
 
     pub fn blockchain_json(&self) -> String {
@@ -73,7 +73,7 @@ impl Blockchain {
         let mut nonce: u128 = 0;
         let start_with = self.difficulty_checker();
         loop {
-            let hash = unit::sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
+            let hash = sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
             if start_with == &hash[..self.difficulty as usize] {
                 break;
             }
@@ -86,7 +86,7 @@ impl Blockchain {
     pub fn create_new_block(&mut self, nonce: u128) {
         let block = Block {
             index: *&self.entity.len() as u32,
-            timestamp: unit::current_time(),
+            timestamp: current_time(),
             transactions: self.transactions.clone(),
             nonce: nonce,
             hash: self.block_hash(),

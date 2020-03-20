@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::io::prelude::*;
 use std::net::TcpStream;
 
-use crate::router;
+use crate::router::method::GET;
 use crate::response;
 
 #[derive(Debug)]
@@ -33,7 +33,7 @@ impl Request {
         let mut components = prefix.split_whitespace();
         let method = match components.nth(0) {
             Some(e) => e,
-            None => router::method::GET,
+            None => GET,
         };
         let path = match components.nth(0) {
             Some(e) => e,
@@ -47,7 +47,7 @@ impl Request {
         let mut components = header.split_whitespace();
         let item = match components.nth(0) {
             Some(e) => e,
-            None => router::method::GET,
+            None => GET,
         };
         let content = match components.nth(0) {
             Some(e) => e,
