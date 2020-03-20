@@ -17,8 +17,7 @@ pub fn transactions_hash(transactions: &str) -> String {
 
 pub fn sha256_hash(previous_block_hash: &str, current_block_hash: &str, nonce: &str) -> String {
     let mut sha256 = Sha256::new();
-    let text = format!("{}{}{}", previous_block_hash, current_block_hash, nonce);
-    sha256.input_str(&text);
+    sha256.input_str(&format!("{}{}{}", previous_block_hash, current_block_hash, nonce));
     sha256.result_str()
 }
 

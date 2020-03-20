@@ -14,14 +14,16 @@ impl Response {
     pub fn write(&self, stream: &mut TcpStream) {
         // println!("response writer");
         let body = &self.body;
-        let contents_length = &self.body.len().to_string();
+        let mut response = default_response(&self.body.len());
         // println!("{:?}", response);
-        let mut response = prefix::PREFIX.to_string();
-        response.push_str(contents_length);
         response.push_str(&format!("{}{}", "\r\n\r\n", body));
-        stream
-            .write(response.as_bytes())
-            .unwrap();
+        stream.write(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     }
+}
+
+fn default_response(contents_length: &usize) -> String {
+    let mut response = prefix::PREFIX.to_string();
+    response.push_str(&contents_length.to_string());
+    response
 }
