@@ -44,11 +44,11 @@ fn throw_request(endpoint: &str, request: Request) -> String {
     String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
 
-fn get_root_request(endpoint: &str) -> String {
+fn get_blockchain(endpoint: &str) -> String {
     let request = Request {
         method: method::GET.to_string(),
         path: "/".to_string(),
-        body: "hello world".to_string()
+        body: "".to_string()
     };
     throw_request(endpoint, request)
 }
@@ -62,15 +62,29 @@ fn post_transaction(endpoint: &str, transaction: Transaction) -> String {
     throw_request(endpoint, request)
 }
 
+fn send_transaction(endpoint: &str, amount: u64, sender: &str, recipient: &str) -> String {
+    post_transaction(endpoint, Transaction {
+        amount: amount,
+        sender: sender.to_string(),
+        recipient: recipient.to_string()
+    })
+}
+
+fn create_new_block(endpoint: &str) -> String {
+    let request = Request {
+        method: method::GET.to_string(),
+        path: "/create_new_block".to_string(),
+        body: "".to_string()
+    };
+    throw_request(endpoint, request)
+}
+
 fn main() {
     let endpoint = "127.0.0.1:3000";
-    let res = get_root_request(endpoint);
-    // println!("{:?}", res);
-    let transaction = Transaction {
-        amount: 100,
-        sender: "Alice".to_string(),
-        recipient: "Bob".to_string()
-    };
-    let result = post_transaction(endpoint, transaction);
-    println!("{:?}", result);
+    let res1 = get_blockchain(endpoint);
+    println!("{:?}", res1);
+    let res2 = send_transaction(endpoint, 100, "Alice", "Bob");
+    println!("{:?}", res2);
+    let res3 = create_new_block(endpoint);
+    println!("{:?}", res3);
 }
