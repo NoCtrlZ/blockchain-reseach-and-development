@@ -8,10 +8,10 @@ $ makers it
 ## Abstract
 Creating blockchain proofs the ownership of digital contents with cool way! With this blockchain, all developer can create Dapp with no knowledge about blockchain by just installing wrapper module. It can have an impact on both art and blockchain industry. Next age comming soon😎
 ## Progress
-- 🥚: 0..30%
-- 🐥:31..60%
-- 🐓:61..90%
-- 🍗:91%..
+- 🥚 0~30%
+- 🐥 31~60%
+- 🐓 61~90%
+- 🍗 91%~
 
 Component | R&D | Integrate
 :------------ | :-------------| :-------------
