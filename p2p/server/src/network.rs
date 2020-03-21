@@ -121,12 +121,15 @@ fn request_contents(request: Throw) -> String {
 }
 
 fn throw_request(endpoint: &str, request: Throw) -> String {
-    let mut buf = vec![];
+    // let mut buf = vec![];
     let mut stream = TcpStream::connect(endpoint).unwrap();
+    stream.set_nonblocking(true).expect("failed to initialize non-blockcking");
     stream.write(request_contents(request).as_bytes()).unwrap();
-    stream.read_to_end(&mut buf).unwrap();
-    String::from_utf8(buf).unwrap()
+    // stream.read_to_end(&mut buf).unwrap();
+    // String::from_utf8(buf).unwrap()
+    "yo".to_string()
 }
+
 
 fn post_node(endpoint: &str, node: Add) -> String {
     let request = Throw {
