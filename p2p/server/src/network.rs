@@ -121,15 +121,11 @@ fn request_contents(request: Throw) -> String {
 }
 
 fn throw_request(endpoint: &str, request: Throw) -> String {
+    let mut buf = vec![];
     let mut stream = TcpStream::connect(endpoint).unwrap();
     stream.write(request_contents(request).as_bytes()).unwrap();
-    stream_read(&mut stream)
-}
-
-fn stream_read(stream: &mut TcpStream) -> String {
-    let mut buffer = [0; 512];
-    stream.read(&mut buffer).unwrap();
-    String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
+    stream.read_to_end(&mut buf).unwrap();
+    String::from_utf8(buf).unwrap()
 }
 
 fn post_node(endpoint: &str, node: Add) -> String {

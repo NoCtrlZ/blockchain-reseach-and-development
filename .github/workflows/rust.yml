@@ -16,4 +16,4 @@ jobs:
       run: cargo install --force cargo-make
 
     - name: integration test
-      run: makers ts
+      run: makers it
