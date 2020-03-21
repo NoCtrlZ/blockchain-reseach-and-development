@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::io::prelude::*;
+use std::io::BufReader;
 use std::net::TcpListener;
 use std::net::TcpStream;
 use rand::Rng;
@@ -44,25 +45,23 @@ mod method {
 impl Network {
     pub fn new(router: Router) {
         let original_endpoint = "127.0.0.1:3000";
-        let mut response = TcpStream::connect(&original_endpoint);
         let mut endpoint = "127.0.0.1:".to_string();
-        match response {
-            Ok(stream) => {
-                let port = random_port();
-                endpoint.push_str(&port);
-                add_node_to_network(&original_endpoint, &endpoint);
-                println!("I am node listening on {}", &port);
-            },
-            Err(_e) => {
-                endpoint.push_str("3000");
-                println!("I am original node");
-            },
+        if let Ok(res) = TcpStream::connect(&original_endpoint) {
+            let port = random_port();
+            endpoint.push_str(&port);
+            add_node_to_network(&original_endpoint, &endpoint);
+            println!("I am node listening on {}", &port);
+        } else {
+            endpoint.push_str("3000");
+            println!("I am original node");
         }
+        println!("{:?}", &endpoint);
         let mut network = Network {
             endpoint: endpoint,
             nodes: Vec::new(),
             router: router
         };
+        println!("{:?}", network.endpoint);
         let listener = TcpListener::bind(&network.endpoint).unwrap();
         for stream in listener.incoming() {
             let response = network.handle(&mut stream.unwrap());
@@ -110,7 +109,7 @@ impl Network {
 
 fn random_port() -> String {
     let mut rng = rand::thread_rng();
-    rng.gen_range(1024, 9000).to_string()
+    rng.gen_range(1025, 9000).to_string()
 }
 
 fn request_contents(request: Throw) -> String {
@@ -124,8 +123,12 @@ fn request_contents(request: Throw) -> String {
 fn throw_request(endpoint: &str, request: Throw) -> String {
     let mut stream = TcpStream::connect(endpoint).unwrap();
     stream.write(request_contents(request).as_bytes()).unwrap();
+    stream_read(&mut stream)
+}
+
+fn stream_read(stream: &mut TcpStream) -> String {
     let mut buffer = [0; 512];
-    stream.read_exact(&mut buffer);
+    stream.read(&mut buffer).unwrap();
     String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
 
