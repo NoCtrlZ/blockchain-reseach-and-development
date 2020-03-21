@@ -46,12 +46,9 @@ impl Network {
     pub fn new(router: Router) {
         let original_endpoint = "127.0.0.1:3000";
         let mut endpoint = "127.0.0.1:".to_string();
-        println!("{:?}", default_port_is_open());
-        if default_port_is_open() {
-            println!("default port is open");
+        if let Ok(res) = TcpStream::connect(&original_endpoint) {
             let port = random_port();
             endpoint.push_str(&port);
-            add_node_to_network(&original_endpoint, &endpoint);
             println!("I am node listening on {}", &port);
         } else {
             endpoint.push_str("3000");
@@ -63,7 +60,6 @@ impl Network {
             nodes: Vec::new(),
             router: router
         };
-        println!("{:?}", network.endpoint);
         let listener = TcpListener::bind(&network.endpoint).unwrap();
         for stream in listener.incoming() {
             let response = network.handle(&mut stream.unwrap());
@@ -132,6 +128,7 @@ fn throw_request(endpoint: &str, request: Throw) -> String {
     "yo".to_string()
 }
 
+
 fn post_node(endpoint: &str, node: Add) -> String {
     let request = Throw {
         method: method::POST.to_string(),
@@ -145,11 +142,4 @@ fn add_node_to_network(endpoint: &str, node: &str) -> String {
     post_node(endpoint, Add {
         endpoint: node.to_string()
     })
-}
-
-fn default_port_is_open() -> bool {
-    match TcpListener::bind(("127.0.0.1", 3000)) {
-        Ok(_) => false,
-        Err(_) => true,
-    }
 }

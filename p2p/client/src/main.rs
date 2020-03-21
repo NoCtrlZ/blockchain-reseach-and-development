@@ -3,7 +3,13 @@ use std::io::BufReader;
 use std::net::TcpStream;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
+mod request;
+mod router;
+mod network;
+mod response;
 
+use router::Router;
+use network::Network;
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
 struct Request {
@@ -36,6 +42,7 @@ fn request_contents(request: Request) -> String {
     contents.push_str(&format!("{}{}", "\r\n\r\n", request.body));
     contents
 }
+
 
 fn throw_request(endpoint: &str, request: Request) -> String {
     let mut stream = TcpStream::connect(endpoint).unwrap();
@@ -103,10 +110,14 @@ fn blockchain_client() {
     println!("{:?}", res2);
     let res3 = create_new_block(endpoint);
     println!("{:?}", res3);
-
 }
 
 fn main() {
-    let res4 = add_node_to_network("127.0.0.1:3347", "127.0.0.1:5000");
-    println!("{:?}", res4);
+    let mut router = Router::new();
+    router.get("/", Network::get_nodes);
+    router.post("/add", Network::add);
+    // let endpoint = "127.0.0.1:3000";
+    // let res4 = add_node_to_network(&endpoint, "127.0.0.1:5000");
+    // println!("{:?}", res4);
+    Network::new(router)
 }
