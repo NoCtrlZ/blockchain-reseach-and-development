@@ -3,13 +3,7 @@ use std::io::BufReader;
 use std::net::TcpStream;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
-mod request;
-mod router;
-mod network;
-mod response;
 
-use router::Router;
-use network::Network;
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
 struct Request {
@@ -102,6 +96,15 @@ fn add_node_to_network(endpoint: &str, node: &str) -> String {
     })
 }
 
+fn get_all_network_nodes(endpoint: &str) -> String {
+    let request = Request {
+        method: method::GET.to_string(),
+        path: "/".to_string(),
+        body: "".to_string()
+    };
+    throw_request(endpoint, request)
+}
+
 fn blockchain_client() {
     let endpoint = "127.0.0.1:3000";
     let res1 = get_blockchain(endpoint);
@@ -113,11 +116,9 @@ fn blockchain_client() {
 }
 
 fn main() {
-    let mut router = Router::new();
-    router.get("/", Network::get_nodes);
-    router.post("/add", Network::add);
-    // let endpoint = "127.0.0.1:3000";
-    // let res4 = add_node_to_network(&endpoint, "127.0.0.1:5000");
-    // println!("{:?}", res4);
-    Network::new(router)
+    let endpoint = "127.0.0.1:3000";
+    let res4 = add_node_to_network(&endpoint, "127.0.0.1:5000");
+    println!("{:?}", res4);
+    let res5 = get_all_network_nodes(&endpoint);
+    println!("{:?}", res5);
 }

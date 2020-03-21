@@ -57,7 +57,6 @@ impl Network {
             endpoint.push_str("3000");
             println!("I am original node");
         }
-        println!("{:?}", &endpoint);
         let mut network = Network {
             endpoint: endpoint,
             nodes: Vec::new(),
