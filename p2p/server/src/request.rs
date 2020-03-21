@@ -18,7 +18,7 @@ pub struct Request {
 impl Request {
     pub fn parse(stream: &mut TcpStream) -> Request {
         let raw_data = convert(stream);
-        println!("{:?}", raw_data);
+        // println!("{:?}", raw_data);
         let (prefix, header, body) = divide(&raw_data);
         let (method, path) = Request::parse_prefix(&prefix);
         let header = Request::parse_header(&header);

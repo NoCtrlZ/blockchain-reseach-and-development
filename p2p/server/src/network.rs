@@ -46,23 +46,22 @@ impl Network {
     pub fn new(router: Router) {
         let original_endpoint = "127.0.0.1:3000";
         let mut endpoint = "127.0.0.1:".to_string();
-        println!("{:?}", default_port_is_open());
         if default_port_is_open() {
             println!("default port is open");
             let port = random_port();
             endpoint.push_str(&port);
             add_node_to_network(&original_endpoint, &endpoint);
-            println!("I am node listening on {}", &port);
+            println!("I am node listening on {}!", &port);
         } else {
             endpoint.push_str("3000");
-            println!("I am original node");
+            println!("I am original node!");
         }
         let mut network = Network {
             endpoint: endpoint,
             nodes: Vec::new(),
             router: router
         };
-        println!("{:?}", network.endpoint);
+        // println!("{:?}", network.endpoint);
         let listener = TcpListener::bind(&network.endpoint).unwrap();
         for stream in listener.incoming() {
             let response = network.handle(&mut stream.unwrap());
@@ -122,13 +121,11 @@ fn request_contents(request: Throw) -> String {
 }
 
 fn throw_request(endpoint: &str, request: Throw) -> String {
-    // let mut buf = vec![];
     let mut stream = TcpStream::connect(endpoint).unwrap();
-    stream.set_nonblocking(true).expect("failed to initialize non-blockcking");
     stream.write(request_contents(request).as_bytes()).unwrap();
-    // stream.read_to_end(&mut buf).unwrap();
-    // String::from_utf8(buf).unwrap()
-    "yo".to_string()
+    let mut buffer = [0; 512];
+    stream.read_exact(&mut buffer);
+    String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
 
 fn post_node(endpoint: &str, node: Add) -> String {
