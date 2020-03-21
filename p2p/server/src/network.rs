@@ -94,6 +94,16 @@ impl Network {
         }
     }
 
+    pub fn join(&mut self, req: Request) -> Response {
+        let body: Add = serde_json::from_str(&req.body).unwrap();
+        self.nodes.push(body.endpoint.clone());
+        self.broadcast(&body.endpoint);
+        Response {
+            prefix: prefix::PREFIX.to_string(),
+            body: "Ok".to_string()
+        }
+    }
+
     pub fn get_nodes(&mut self, req: Request) -> Response {
         let info = NetworkInfo {
             endpoint: self.endpoint.clone(),
@@ -103,6 +113,12 @@ impl Network {
         Response {
             prefix: prefix::PREFIX.to_string(),
             body: network.to_string()
+        }
+    }
+
+    pub fn broadcast(&mut self, node: &str) {
+        for i in 0..self.nodes.len() {
+            add_node_to_network(&self.nodes[i], node);
         }
     }
 }

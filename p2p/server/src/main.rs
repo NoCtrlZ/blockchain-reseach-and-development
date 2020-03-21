@@ -12,5 +12,6 @@ fn main() {
     let mut router = Router::new();
     router.get("/", Network::get_nodes);
     router.post("/add", Network::add);
+    router.post("/join", Network::join);
     Network::new(router)
 }
