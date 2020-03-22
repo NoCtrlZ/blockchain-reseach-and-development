@@ -24,10 +24,10 @@ Component | R&D | Integrate
 :------------ | :-------------| :-------------
 Proof Of Work|🍗|🍗
 Adjustment Difficultty|🥚|🥚
-Lamport Signature|🍗|🥚
+Lamport Signature|🍗|🍗
 Merkle Tree|🐓|🥚
 P2P Network|🍗|🐥
-Wallet|🍗|🥚
+Wallet|🍗|🍗
 Block Structure|🐓|🐓
 Transaction Structure|🐓|🐥
 UTXO|🥚|🥚
