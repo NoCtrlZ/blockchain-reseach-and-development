@@ -91,7 +91,7 @@ impl Server {
 
     pub fn add(&mut self, req: Request) -> Response {
         let body: Add = serde_json::from_str(&req.body).unwrap();
-        println!("{:?}", body);
+        println!("add {} to network", body.endpoint);
         self.network.nodes.push(body.endpoint);
         Response {
             prefix: PREFIX.to_string(),

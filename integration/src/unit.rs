@@ -2,6 +2,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use rand::Rng;
+use std::net::TcpListener;
+use std::net::TcpStream;
+use std::io::prelude::*;
 
 pub fn current_time() -> u64 {
     let now = SystemTime::now();
@@ -21,7 +24,20 @@ pub fn sha256_hash(previous_block_hash: &str, current_block_hash: &str, nonce: &
     sha256.result_str()
 }
 
-pub fn random_port() -> u16 {
+pub fn random_port() -> String {
     let mut rng = rand::thread_rng();
-    rng.gen_range(1024, 9000)
+    rng.gen_range(1024, 9000).to_string()
+}
+
+pub fn is_open(endpoint: &str) -> bool {
+    match TcpListener::bind(&endpoint) {
+        Ok(_) => false,
+        Err(_) => true,
+    }
+}
+
+pub fn stream_to_string(mut stream: TcpStream) -> String {
+    let mut buffer = Vec::new();
+    stream.read_to_end(&mut buffer);
+    String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
