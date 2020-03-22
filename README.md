@@ -29,7 +29,7 @@ Merkle Tree|🐓|🥚
 P2P Network|🍗|🍗
 Wallet|🍗|🍗
 Block Structure|🐓|🐓
-Transaction Structure|🐓|🐥
+Transaction Type|🐓|🐥
 UTXO|🥚|🥚
 ## Directory
 ### 🛰️blockchain

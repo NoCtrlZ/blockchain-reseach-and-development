@@ -1,3 +1,8 @@
+mod utxo;
+
+use utxo::Transaction;
+
 fn main() {
-    println!("Hello, world!");
+    let utxo = Transaction::new();
+    println!("{:?}", utxo);
 }
