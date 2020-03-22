@@ -6,6 +6,12 @@ mod request;
 mod router;
 mod server;
 mod response;
+mod lamport;
+
+extern crate rand;
+extern crate bigint;
+extern crate rustc_hex;
+extern crate base64;
 
 use server::Server;
 use router::Router;

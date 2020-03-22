@@ -1,6 +1,7 @@
 use std::net::TcpListener;
 use std::net::TcpStream;
 use serde_json::json;
+use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Transaction};
@@ -10,13 +11,16 @@ use crate::response::{Response, PREFIX};
 pub struct Server {
     router: Router,
     blockchain: Blockchain,
-    network: Network
+    network: Network,
+    wallet: Wallet
 }
 
 impl Server {
     pub fn new(router: Router) -> Server {
         let default_difficulty = 3;
         let default_port = 3000;
+        let wallet = Wallet::new();
+        println!("this node address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
             blockchain: Blockchain {
@@ -27,7 +31,8 @@ impl Server {
             network: Network {
                 nodes: Vec::new(),
                 host: [127, 0, 0, 1],
-            }
+            },
+            wallet: wallet
         };
         let original_node = Node {
             port: default_port
