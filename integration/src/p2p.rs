@@ -4,19 +4,21 @@ use rand::Rng;
 use std::net::TcpListener;
 use std::net::TcpStream;
 use std::io::prelude::*;
+use crate::response::Response;
+use crate::request::Request;
 
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
 #[derive(Debug)]
 pub struct Network {
     pub endpoint: String,
-    nodes: Vec<String>
+    pub nodes: Vec<String>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct NetworkInfo {
-    endpoint: String,
-    nodes: Vec<String>
+    pub endpoint: String,
+    pub nodes: Vec<String>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,8 +29,8 @@ struct Throw {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-struct Add {
-    endpoint: String
+pub struct Add {
+    pub endpoint: String
 }
 
 mod method {
@@ -53,6 +55,12 @@ impl Network {
         Network {
             endpoint: endpoint,
             nodes: Vec::new()
+        }
+    }
+
+    pub fn broadcast(&mut self, node: &str) {
+        for i in 0..self.nodes.len() {
+            add_node_to_network(&self.nodes[i], node);
         }
     }
 }

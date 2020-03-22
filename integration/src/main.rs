@@ -21,6 +21,9 @@ fn set_router() -> Router {
     router.get("/", Server::get_blockchain);
     router.get("/create_new_block", Server::create_new_block);
     router.post("/send_transaction", Server::send_transaction);
+    router.get("/nodes", Server::get_nodes);
+    router.post("/add", Server::add);
+    router.post("/join", Server::join);
     router
 }
 

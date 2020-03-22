@@ -5,7 +5,7 @@ use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Transaction};
-use crate::p2p::Network;
+use crate::p2p::{Network, Add, NetworkInfo};
 use crate::response::{Response, PREFIX};
 
 pub struct Server {
@@ -88,4 +88,37 @@ impl Server {
             body: transaction_json.to_string()
         }
     }
+
+    pub fn add(&mut self, req: Request) -> Response {
+        let body: Add = serde_json::from_str(&req.body).unwrap();
+        println!("{:?}", body);
+        self.network.nodes.push(body.endpoint);
+        Response {
+            prefix: PREFIX.to_string(),
+            body: "Ok".to_string()
+        }
+    }
+
+    pub fn join(&mut self, req: Request) -> Response {
+        let body: Add = serde_json::from_str(&req.body).unwrap();
+        self.network.nodes.push(body.endpoint.clone());
+        self.network.broadcast(&body.endpoint);
+        Response {
+            prefix: PREFIX.to_string(),
+            body: "Ok".to_string()
+        }
+    }
+
+    pub fn get_nodes(&mut self, req: Request) -> Response {
+        let info = NetworkInfo {
+            endpoint: self.network.endpoint.clone(),
+            nodes: self.network.nodes.clone()
+        };
+        let network = json!(info);
+        Response {
+            prefix: PREFIX.to_string(),
+            body: network.to_string()
+        }
+    }
+
 }
