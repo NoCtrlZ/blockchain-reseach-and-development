@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Transaction {
-    input: Box<Option<Input>>,
-    output: Box<Option<Output>>
+    input: Vec<Input>,
+    output: Vec<Output>
 }
 
 #[derive(Debug)]
@@ -19,8 +19,16 @@ struct Output {
 impl Transaction {
     pub fn new() -> Transaction {
         Transaction {
-            input: Box::new(None),
-            output: Box::new(None)
+            input: Vec::new(),
+            output: Vec::new()
         }
+    }
+
+    pub fn admin_transfer(&mut self, address: &str) {
+        let output = Output {
+            recipient: address.to_string(),
+            amount: 100
+        };
+        self.output.push(output);
     }
 }
