@@ -1,38 +1,61 @@
-#[derive(Debug)]
-pub struct Network {
-    pub nodes: Vec<Node>,
-    pub host: [i32; 4]
-}
+use serde_json::json;
+use serde::{Deserialize, Serialize};
+use rand::Rng;
+use std::net::TcpListener;
 
 #[derive(Debug)]
-pub struct Node {
-    pub port: u16
+pub struct Network {
+    pub endpoint: String,
+    nodes: Vec<String>
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct NetworkInfo {
+    endpoint: String,
+    nodes: Vec<String>
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Throw {
+    method: String,
+    path: String,
+    body: String
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Add {
+    endpoint: String
 }
 
 impl Network {
     pub fn new() -> Network {
-        let mut network = Network {
-            nodes: Vec::new(),
-            host: [127, 0, 0, 1],
-        };
-        let original_node = Node {
-            port: 3000
-        };
-        network.nodes.push(original_node);
-        network
-    }
-
-    pub fn get_address(&self) -> String {
-        let mut address = "".to_string();
-        for i in 0..self.host.len() {
-            address.push_str(&self.host[i].to_string());
-            if i != self.host.len() - 1 {
-                address.push_str(".");
-            } else {
-                address.push_str(":");
-                address.push_str(&self.nodes[0].port.to_string());
-            }
+        let original_endpoint = "127.0.0.1:3000";
+        let mut endpoint = "127.0.0.1:".to_string();
+        if default_port_is_open() {
+            // println!("default port is open");
+            // let port = random_port();
+            // endpoint.push_str(&port);
+            // add_node_to_network(&original_endpoint, &endpoint);
+            // println!("I am node listening on {}!", &port);
+        } else {
+            endpoint.push_str("3000");
+            println!("I am original node!");
         }
-        address
+        Network {
+            endpoint: endpoint,
+            nodes: Vec::new()
+        }
+    }
+}
+
+fn random_port() -> String {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(1025, 9000).to_string()
+}
+
+fn default_port_is_open() -> bool {
+    match TcpListener::bind(("127.0.0.1", 3000)) {
+        Ok(_) => false,
+        Err(_) => true,
     }
 }

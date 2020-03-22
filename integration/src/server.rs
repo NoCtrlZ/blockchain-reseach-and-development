@@ -5,7 +5,7 @@ use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Transaction};
-use crate::p2p::{Network, Node};
+use crate::p2p::Network;
 use crate::response::{Response, PREFIX};
 
 pub struct Server {
@@ -18,9 +18,9 @@ pub struct Server {
 impl Server {
     pub fn new(router: Router) -> Server {
         let default_difficulty = 3;
-        let default_port = 3000;
         let wallet = Wallet::new();
-        println!("this node address is {:?}", &wallet.get_address());
+        let network = Network::new();
+        println!("the address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
             blockchain: Blockchain {
@@ -28,22 +28,15 @@ impl Server {
                 transactions: Vec::new(),
                 difficulty: default_difficulty,
             },
-            network: Network {
-                nodes: Vec::new(),
-                host: [127, 0, 0, 1],
-            },
+            network: network,
             wallet: wallet
         };
-        let original_node = Node {
-            port: default_port
-        };
         server.blockchain.create_genesis_block();
-        server.network.nodes.push(original_node);
         server
     }
 
     pub fn start(&mut self) {
-        let addr = self.network.get_address();
+        let addr = self.network.endpoint.clone();
         let listener = TcpListener::bind(addr).unwrap();
         for stream in listener.incoming() {
             self.handle(&mut stream.unwrap());
