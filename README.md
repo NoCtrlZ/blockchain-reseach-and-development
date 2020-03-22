@@ -26,7 +26,7 @@ Proof Of Work|🍗|🍗
 Adjustment Difficultty|🥚|🥚
 Lamport Signature|🍗|🍗
 Merkle Tree|🐓|🥚
-P2P Network|🍗|🐥
+P2P Network|🍗|🍗
 Wallet|🍗|🍗
 Block Structure|🐓|🐓
 Transaction Structure|🐓|🐥
