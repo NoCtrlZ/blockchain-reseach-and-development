@@ -27,7 +27,7 @@ struct Node {
     left: Box<Option<Node>>,
     right: Box<Option<Node>>,
     parent: Box<Option<Node>>,
-    sibling: String,
+    sibling: Box<Option<Node>>,
     position: String,
     data: String,
     hash: String
@@ -41,7 +41,7 @@ impl Tree {
                 left: Box::new(None),
                 right: Box::new(None),
                 parent: Box::new(None),
-                sibling: "".to_string(),
+                sibling: Box::new(None),
                 position: "".to_string(),
                 data: transactions[i].to_string(),
                 hash: hash(&transactions[i]).to_string(),
@@ -66,20 +66,36 @@ impl Tree {
         if self.layer.len() % 2 == 1 {
             self.layer.push(self.layer.last().unwrap().clone());
         }
-
         for i in 0..self.layer.len() / 2 {
             let mut left = self.layer[i * 2].clone();
             let mut right = self.layer[(i * 2) + 1].clone();
-            let parent = Node {
+            let mut parent = Node {
                 left: Box::new(None),
                 right: Box::new(None),
                 parent: Box::new(None),
-                sibling: "".to_string(),
+                sibling: Box::new(None),
                 position: "".to_string(),
                 data: format!("{}{}", &left.hash, &right.hash).to_string(),
                 hash: hash(&format!("{}{}", &left.hash, &right.hash).to_string())
             };
+            left.parent = Box::new(Some(parent.clone()));
+            left.sibling = Box::new(Some(right.clone()));
+            left.position = "left".to_string();
+
+            right.parent = Box::new(Some(parent.clone()));
+            right.sibling = Box::new(Some(left.clone()));
+            right.position = "right".to_string();
+            left.sibling = Box::new(Some(right.clone()));
+
+            parent.left = Box::new(Some(left.clone()));
+            parent.right = Box::new(Some(right.clone()));
+            left.parent = Box::new(Some(parent.clone()));
+            right.parent = Box::new(Some(parent.clone()));
             new_layer.push(parent);
+            if(self.layer.len() == self.leaves.len()) {
+                self.leaves[i * 2] = left;
+                self.leaves[(i * 2) + 1] = right;
+            }
         }
         self.layer = new_layer;
     }
@@ -91,12 +107,21 @@ impl Tree {
             recipient: recipient.to_string()
         }).to_string();
         for i in 0..self.leaves.len() {
+            // println!("{:?}", self.leaves[i]);
             if hash(&transaction) == self.leaves[i].hash {
                 return Ok(self.leaves[i].clone());
             }
         }
         Err(false)
     }
+
+    // fn get_pass(&self, amount: u64, sender: &str, recipient: &str) {
+    //     let target = self.search(amount: u64, sender: &str, recipient: &str).unwrap();
+    //     let markle_pass = vec![];
+    //     while target.parent == None {
+    //         markle_pass.push(target.)
+    //     }
+    // }
 }
 
 impl Transactions {
@@ -128,9 +153,10 @@ fn main() {
     send_transactions(&mut transactions);
     let leaves = transactions.transactions_to_leaves();
     let mut tree = Tree::new(leaves);
+    // println!("{:?}", &tree);
     let merkle_root = tree.build_tree();
     let target = tree.search(25, "alice", "crea").unwrap();
-    println!("{:?}", target);
+    println!("{:?}", target.sibling);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
