@@ -49,7 +49,11 @@ impl Network {
             println!("default port is open");
             let port = random_port();
             endpoint.push_str(&port);
-            add_node_to_network(&original_endpoint, &endpoint);
+            let res = add_node_to_network(&original_endpoint, &endpoint);
+            println!("{:?}", res.body);
+            // for i in 0..res.body.len() {
+            //     nodes.push(res.body[i]);
+            // }
             nodes.push(original_endpoint.to_string());
             println!("I am node listening on {}!", &port);
         } else {
@@ -88,28 +92,28 @@ fn request_contents(request: Throw) -> String {
     contents
 }
 
-fn throw_request(endpoint: &str, request: Throw) -> String {
+fn throw_request(endpoint: &str, request: Throw) -> Request {
     let mut stream = TcpStream::connect(endpoint).unwrap();
     stream.write(request_contents(request).as_bytes()).unwrap();
-    stream_to_string(stream)
+    Request::parse(&mut stream)
 }
 
-fn post_node(endpoint: &str, node: Add) -> String {
+fn post_node(endpoint: &str, node: Add) -> Request {
     let request = Throw {
         method: method::POST.to_string(),
-        path: "/add".to_string(),
+        path: "/join".to_string(),
         body: json!(node).to_string()
     };
     throw_request(endpoint, request)
 }
 
-fn add_node_to_network(endpoint: &str, node: &str) -> String {
+fn add_node_to_network(endpoint: &str, node: &str) -> Request {
     post_node(endpoint, Add {
         endpoint: node.to_string()
     })
 }
 
-fn add_block_to_blockchain(endpoint: &str, block: Block) -> String {
+fn add_block_to_blockchain(endpoint: &str, block: Block) -> Request {
     let request = Throw {
         method: method::POST.to_string(),
         path: "/add_block".to_string(),

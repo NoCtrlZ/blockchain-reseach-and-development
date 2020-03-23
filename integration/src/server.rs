@@ -137,11 +137,13 @@ impl Server {
 
     pub fn join(&mut self, req: Request) -> Response {
         let body: Add = serde_json::from_str(&req.body).unwrap();
-        self.network.nodes.push(body.endpoint.clone());
+        println!("add {} to network", body.endpoint);
+        let current_nodes = self.network.nodes.clone();
         self.network.broadcast(&body.endpoint);
+        self.network.nodes.push(body.endpoint.clone());
         Response {
             prefix: PREFIX.to_string(),
-            body: "Ok".to_string()
+            body: json!(current_nodes).to_string()
         }
     }
 
