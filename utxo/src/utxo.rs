@@ -92,7 +92,7 @@ impl Utxo {
                 panic!("not enough money");
             }
         } else {
-            panic!("do not exist transaction");
+            panic!("transaction is already used");
         }
     }
 }
