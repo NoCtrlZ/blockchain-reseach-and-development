@@ -95,6 +95,21 @@ impl Utxo {
             panic!("transaction is already used");
         }
     }
+
+    pub fn balance(&self, address: &str) -> u64 {
+        let mut balance: u64 = 0;
+        for (tx_hash, transaction) in &self.transactions[address] {
+            println!("{}", tx_hash);
+            if !transaction.is_spent {
+                for i in 0..transaction.output.len() {
+                    if transaction.output[i].recipient == address {
+                        balance += transaction.output[i].amount;
+                    }
+                }
+            }
+        }
+        balance
+    }
 }
 
 pub fn transaction_hash(transaction: &str) -> String {
