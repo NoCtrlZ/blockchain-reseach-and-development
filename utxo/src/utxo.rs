@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Utxo {
-    transactions: HashMap<String, Transaction>
+    transactions: HashMap<String, HashMap<String, Transaction>>
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -56,16 +56,16 @@ impl Utxo {
         transaction.input.push(input);
         transaction.output.push(output);
         let transaction_hash = transaction_hash(&json!(transaction).to_string());
-        self.transactions.insert(transaction_hash.to_string(), transaction.clone());
+        self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(transaction_hash.to_string(), transaction.clone());
         transaction_hash
     }
 
     pub fn transfer(&mut self, tx_hash: &str, output_index: u8, sender: &str, recipient: &str, amount: u64) -> String {
         // todo multiple transactions input
-        if !self.transactions[tx_hash].is_spent {
-            if self.transactions[tx_hash].output[output_index as usize].amount > amount {
+        if !self.transactions[sender][tx_hash].is_spent {
+            if self.transactions[sender][tx_hash].output[output_index as usize].amount > amount {
                 let input = Input {
-                    transaction: self.transactions[tx_hash].clone(),
+                    transaction: self.transactions[sender][tx_hash].clone(),
                     output_index: output_index
                 };
                 let output = Output {
@@ -74,7 +74,7 @@ impl Utxo {
                 };
                 let sendback = Output {
                     recipient: sender.to_string(),
-                    amount: self.transactions[tx_hash].output[output_index as usize].amount - amount
+                    amount: self.transactions[sender][tx_hash].output[output_index as usize].amount - amount
                 };
                 let mut transaction = Transaction {
                     is_spent: false,
@@ -84,9 +84,9 @@ impl Utxo {
                 transaction.input.push(input);
                 transaction.output.push(output);
                 transaction.output.push(sendback);
-                self.transactions.get_mut(tx_hash).unwrap().is_spent = true;
+                self.transactions.get_mut(sender).unwrap().get_mut(tx_hash).unwrap().is_spent = true;
                 let transaction_hash = transaction_hash(&json!(transaction).to_string());
-                self.transactions.insert(transaction_hash.to_string(), transaction.clone());
+                self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(transaction_hash.to_string(), transaction.clone());
                 return transaction_hash
             } else {
                 panic!("not enough money");
