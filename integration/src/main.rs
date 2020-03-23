@@ -7,6 +7,7 @@ mod router;
 mod server;
 mod response;
 mod lamport;
+mod utxo;
 
 extern crate rand;
 extern crate bigint;

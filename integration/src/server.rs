@@ -7,12 +7,14 @@ use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Block, Transaction};
 use crate::p2p::{Network, Add, NetworkInfo};
 use crate::response::{Response, PREFIX};
+use crate::utxo::Utxo;
 
 pub struct Server {
     router: Router,
     blockchain: Blockchain,
     network: Network,
-    wallet: Wallet
+    wallet: Wallet,
+    utxo: Utxo
 }
 
 impl Server {
@@ -20,6 +22,7 @@ impl Server {
         let default_difficulty = 3;
         let wallet = Wallet::new();
         let network = Network::new();
+        let utxo = Utxo::new();
         println!("the address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
@@ -29,7 +32,8 @@ impl Server {
                 difficulty: default_difficulty,
             },
             network: network,
-            wallet: wallet
+            wallet: wallet,
+            utxo: utxo
         };
         server.blockchain.create_genesis_block();
         server
