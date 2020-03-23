@@ -68,7 +68,7 @@ impl Network {
 
     pub fn block_broadcast(&mut self, block: Block) {
         for i in 0..self.nodes.len() {
-
+            add_block_to_blockchain(&self.nodes[i], block.clone());
         }
     }
 
