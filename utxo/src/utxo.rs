@@ -60,9 +60,41 @@ impl Utxo {
         transaction_hash
     }
 
-    // pub fn transfer(&mut self, sender: &str, recipient: &str, amount) {
-
-    // }
+    pub fn transfer(&mut self, tx_hash: &str, output_index: u8, sender: &str, recipient: &str, amount: u64) -> String {
+        // todo multiple transactions input
+        if !self.transactions[tx_hash].is_spent {
+            if self.transactions[tx_hash].output[output_index as usize].amount > amount {
+                let input = Input {
+                    transaction: self.transactions[tx_hash].clone(),
+                    output_index: output_index
+                };
+                let output = Output {
+                    recipient: recipient.to_string(),
+                    amount: amount
+                };
+                let sendback = Output {
+                    recipient: sender.to_string(),
+                    amount: self.transactions[tx_hash].output[output_index as usize].amount - amount
+                };
+                let mut transaction = Transaction {
+                    is_spent: false,
+                    input: Vec::new(),
+                    output: Vec::new()
+                };
+                transaction.input.push(input);
+                transaction.output.push(output);
+                transaction.output.push(sendback);
+                self.transactions.get_mut(tx_hash).unwrap().is_spent = true;
+                let transaction_hash = transaction_hash(&json!(transaction).to_string());
+                self.transactions.insert(transaction_hash.to_string(), transaction.clone());
+                return transaction_hash
+            } else {
+                panic!("not enough money");
+            }
+        } else {
+            panic!("do not exist transaction");
+        }
+    }
 }
 
 pub fn transaction_hash(transaction: &str) -> String {
