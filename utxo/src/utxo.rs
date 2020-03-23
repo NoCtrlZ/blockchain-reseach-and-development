@@ -2,10 +2,11 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
+use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Utxo {
-    transactions: Vec<Transaction>
+    transactions: HashMap<String, Transaction>
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -30,7 +31,7 @@ struct Output {
 impl Utxo {
     pub fn new() -> Utxo {
         Utxo {
-            transactions: Vec::new()
+            transactions: HashMap::new()
         }
     }
 
@@ -54,8 +55,9 @@ impl Utxo {
         };
         transaction.input.push(input);
         transaction.output.push(output);
-        self.transactions.push(transaction.clone());
-        transactions_hash(&json!(transaction).to_string())
+        let transaction_hash = transaction_hash(&json!(transaction).to_string());
+        self.transactions.insert(transaction_hash.to_string(), transaction.clone());
+        transaction_hash
     }
 
     // pub fn transfer(&mut self, sender: &str, recipient: &str, amount) {
@@ -63,8 +65,8 @@ impl Utxo {
     // }
 }
 
-pub fn transactions_hash(transactions: &str) -> String {
+pub fn transaction_hash(transaction: &str) -> String {
     let mut sha256 = Sha256::new();
-    sha256.input_str(&transactions);
+    sha256.input_str(&transaction);
     sha256.result_str()
 }
