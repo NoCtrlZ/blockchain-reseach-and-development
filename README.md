@@ -44,8 +44,10 @@ Development about lamport signature which has tolerance for quantum computer. Ge
 Development about wallet. Wallet struct including private key, public key and address, and methods including sign, verify and genelate.
 ### 👽transaction
 Development about transaction message. Signing transaction with private key, issuing certificate transaction and transfer token transaction, verifying transaction.
-### 🛩️merkle-tree
+### 🛫merkle-tree
 Development about merkle tree which is data structure enables us to summarize and verify the transactions. Wallet has summarized transactions and checks whether they are altered.
+### 🦅utxo
+Development about uxto which is data structure enables us to prevent multiple payment and keep transactions history high secrecy.
 ## Test
 ```
 $ makers it
