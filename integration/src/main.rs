@@ -18,8 +18,10 @@ use router::Router;
 
 fn set_router() -> Router {
     let mut router = Router::new();
-    router.get("/", Server::get_blockchain);
+    router.get("/blockchain", Server::get_blockchain);
+    router.get("/network", Server::get_network);
     router.get("/create_new_block", Server::create_new_block);
+    router.post("/add_block", Server::add_block);
     router.post("/send_transaction", Server::send_transaction);
     router.get("/nodes", Server::get_nodes);
     router.post("/add", Server::add);

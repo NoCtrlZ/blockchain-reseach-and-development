@@ -4,7 +4,7 @@ use serde_json::json;
 use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
-use crate::blockchain::{Blockchain, Transaction};
+use crate::blockchain::{Blockchain, Block, Transaction};
 use crate::p2p::{Network, Add, NetworkInfo};
 use crate::response::{Response, PREFIX};
 
@@ -68,9 +68,28 @@ impl Server {
         }
     }
 
+    pub fn get_network(&mut self, req: Request) -> Response {
+        let whole_network = self.network.network_json();
+        Response {
+            prefix: PREFIX.to_string(),
+            body: whole_network.to_string()
+        }
+    }
+
     pub fn create_new_block(&mut self, req: Request) -> Response {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
+        self.network.block_broadcast(block.clone());
+        Response {
+            prefix: PREFIX.to_string(),
+            body: json!(block).to_string()
+        }
+    }
+
+    pub fn add_block(&mut self, req: Request) -> Response {
+        let block: Block = serde_json::from_str(&req.body).unwrap();
+        self.blockchain.entity.push(block.clone());
+        self.blockchain.transactions.clear();
         Response {
             prefix: PREFIX.to_string(),
             body: json!(block).to_string()

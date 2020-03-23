@@ -4,13 +4,14 @@ use rand::Rng;
 use std::net::TcpListener;
 use std::net::TcpStream;
 use std::io::prelude::*;
+use crate::blockchain::Block;
 use crate::response::Response;
 use crate::request::Request;
 use crate::unit::{is_open, random_port, stream_to_string};
 
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Network {
     pub endpoint: String,
     pub nodes: Vec<String>
@@ -64,6 +65,17 @@ impl Network {
             add_node_to_network(&self.nodes[i], node);
         }
     }
+
+    pub fn block_broadcast(&mut self, block: Block) {
+        for i in 0..self.nodes.len() {
+
+        }
+    }
+
+    pub fn network_json(&self) -> String {
+        let network = json!(&self);
+        network.to_string()
+    }
 }
 
 fn request_contents(request: Throw) -> String {
@@ -93,4 +105,13 @@ fn add_node_to_network(endpoint: &str, node: &str) -> String {
     post_node(endpoint, Add {
         endpoint: node.to_string()
     })
+}
+
+fn add_block_to_blockchain(endpoint: &str, block: Block) -> String {
+    let request = Throw {
+        method: method::POST.to_string(),
+        path: "/add_block".to_string(),
+        body: json!(block).to_string()
+    };
+    throw_request(endpoint, request)
 }
