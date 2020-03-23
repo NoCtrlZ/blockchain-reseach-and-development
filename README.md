@@ -30,7 +30,7 @@ P2P Network|🍗|🍗
 Wallet|🍗|🍗
 Block Structure|🐓|🐓
 Transaction Type|🐓|🐥
-UTXO|🐥|🥚
+UTXO|🍗|🥚
 ## Directory
 ### 🛰️blockchain
 Development about blockchain data structure including struct of `blockchain` itself, `block` and `transaction`. Also has methods to chage the data structure like `create_new_block`, `send_transaction`, `proof_of_work` and so on.

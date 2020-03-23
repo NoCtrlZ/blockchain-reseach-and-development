@@ -10,4 +10,5 @@ script = ['''
 (cd p2p/server && cargo test)
 (cd transaction && cargo test)
 (cd wallet && cargo test)
+(cd utxo && cargo test)
 ''']
