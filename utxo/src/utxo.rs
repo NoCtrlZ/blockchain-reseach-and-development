@@ -85,9 +85,10 @@ impl Utxo {
                 transaction.output.push(output);
                 transaction.output.push(sendback);
                 self.transactions.get_mut(sender).unwrap().get_mut(tx_hash).unwrap().is_spent = true;
-                let transaction_hash = transaction_hash(&json!(transaction).to_string());
-                self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(transaction_hash.to_string(), transaction.clone());
-                return transaction_hash
+                let tx_hash = transaction_hash(&json!(transaction).to_string());
+                self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(tx_hash.to_string(), transaction.clone());
+                self.transactions.entry(sender.to_string()).or_insert_with(HashMap::new).insert(tx_hash.to_string(), transaction.clone());
+                return tx_hash
             } else {
                 panic!("not enough money");
             }
@@ -99,7 +100,6 @@ impl Utxo {
     pub fn balance(&self, address: &str) -> u64 {
         let mut balance: u64 = 0;
         for (tx_hash, transaction) in &self.transactions[address] {
-            println!("{}", tx_hash);
             if !transaction.is_spent {
                 for i in 0..transaction.output.len() {
                     if transaction.output[i].recipient == address {
@@ -121,6 +121,28 @@ pub fn transaction_hash(transaction: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_admin_transfer() {
+        let dummy_address = "0x114514";
+        let mut utxo = Utxo::new();
+        let tx_hash = utxo.admin_transfer(dummy_address);
+        let balance = utxo.balance(dummy_address);
+        assert_eq!(100, balance);
+    }
+
+    #[test]
+    fn test_transfer() {
+        let dummy_address1 = "0x114514";
+        let dummy_address2 = "0x114515";
+        let mut utxo = Utxo::new();
+        let tx_hash = utxo.admin_transfer(dummy_address1);
+        let transfer_hash = utxo.transfer(&tx_hash, 0, &dummy_address1, &dummy_address2, 50);
+        let balance1 = utxo.balance(dummy_address1);
+        let balance2 = utxo.balance(dummy_address2);
+        assert_eq!(50, balance1);
+        assert_eq!(50, balance2);
+    }
 
     #[test]
     #[should_panic]

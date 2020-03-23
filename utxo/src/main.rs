@@ -10,6 +10,6 @@ fn main() {
     let balance = utxo.balance(dummy_address);
     println!("balance is {}", balance);
     let transfer_hash = utxo.transfer(&tx_hash, 0, &dummy_address, "0x114515", 50);
-    // println!("transfer tx hash is {}", transfer_hash);
-    // println!("{:?}", utxo);
+    println!("transfer tx hash is {}", transfer_hash);
+    println!("{:?}", utxo);
 }
