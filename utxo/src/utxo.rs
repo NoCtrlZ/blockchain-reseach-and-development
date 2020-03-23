@@ -102,3 +102,27 @@ pub fn transaction_hash(transaction: &str) -> String {
     sha256.input_str(&transaction);
     sha256.result_str()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic]
+    fn test_multiple_payment_fail() {
+        let dummy_address = "0x114514";
+        let mut utxo = Utxo::new();
+        let tx_hash = utxo.admin_transfer(dummy_address);
+        let transfer_hash = utxo.transfer(&tx_hash, 0, &dummy_address, "0x114515", 50);
+        let transfer_hash = utxo.transfer(&tx_hash, 0, &dummy_address, "0x114515", 50);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_transfer_more_than_balance() {
+        let dummy_address = "0x114514";
+        let mut utxo = Utxo::new();
+        let tx_hash = utxo.admin_transfer(dummy_address);
+        let transfer_hash = utxo.transfer(&tx_hash, 0, &dummy_address, "0x114515", 5000);
+    }
+}
