@@ -64,6 +64,18 @@ impl Server {
         response.write(stream);
     }
 
+    pub fn get_all(&mut self, req: Request) -> Response {
+        let address = self.wallet.get_address();
+        Response {
+            prefix: PREFIX.to_string(),
+            body: json!({
+                "blockchain": self.blockchain,
+                "network": self.network,
+                "address": address
+            }).to_string()
+        }
+    }
+
     pub fn get_blockchain(&mut self, req: Request) -> Response {
         let whole_blockchain = self.blockchain.blockchain_json();
         Response {

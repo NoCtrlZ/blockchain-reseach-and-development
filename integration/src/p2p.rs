@@ -44,11 +44,13 @@ impl Network {
     pub fn new() -> Network {
         let original_endpoint = "127.0.0.1:3000";
         let mut endpoint = "127.0.0.1:".to_string();
+        let mut nodes = vec![];
         if is_open(&original_endpoint) {
             println!("default port is open");
             let port = random_port();
             endpoint.push_str(&port);
             add_node_to_network(&original_endpoint, &endpoint);
+            nodes.push(original_endpoint.to_string());
             println!("I am node listening on {}!", &port);
         } else {
             endpoint.push_str("3000");
@@ -56,7 +58,7 @@ impl Network {
         }
         Network {
             endpoint: endpoint,
-            nodes: Vec::new()
+            nodes: nodes
         }
     }
 
