@@ -83,6 +83,7 @@ impl Server {
     pub fn create_new_block(&mut self, req: Request) -> Response {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
+        self.utxo.admin_transfer(&self.wallet.get_address());
         self.network.block_broadcast(block.clone());
         Response {
             prefix: PREFIX.to_string(),
@@ -144,4 +145,12 @@ impl Server {
         }
     }
 
+    pub fn balance(&mut self, req: Request) -> Response {
+        let address = self.wallet.get_address();
+        let balance = self.utxo.balance(&address);
+        Response {
+            prefix: PREFIX.to_string(),
+            body: balance.to_string()
+        }
+    }
 }

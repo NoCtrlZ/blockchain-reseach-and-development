@@ -99,11 +99,13 @@ impl Utxo {
 
     pub fn balance(&self, address: &str) -> u64 {
         let mut balance: u64 = 0;
-        for (tx_hash, transaction) in &self.transactions[address] {
-            if !transaction.is_spent {
-                for i in 0..transaction.output.len() {
-                    if transaction.output[i].recipient == address {
-                        balance += transaction.output[i].amount;
+        if self.transactions.contains_key(address) {
+            for (tx_hash, transaction) in &self.transactions[address] {
+                if !transaction.is_spent {
+                    for i in 0..transaction.output.len() {
+                        if transaction.output[i].recipient == address {
+                            balance += transaction.output[i].amount;
+                        }
                     }
                 }
             }

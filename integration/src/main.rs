@@ -27,6 +27,7 @@ fn set_router() -> Router {
     router.get("/nodes", Server::get_nodes);
     router.post("/add", Server::add);
     router.post("/join", Server::join);
+    router.get("/balance", Server::balance);
     router
 }
 
