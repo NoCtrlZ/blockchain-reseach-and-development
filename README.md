@@ -9,11 +9,19 @@ $ cd integration
 $ cargo install --force cargo-make
 $ makers run
 ```
-You can access blockchain information on [`http://localhost:3000`](http://localhost:3000).  
-- Send Transaction  
-```$ makers tx```
+You can access blockchain information on [`http://localhost:3000`](http://localhost:3000) and if you execute same command on same directory, new node will start and be connected to network.  
+- Get Blockchain Info  
+`/`  
+- Get All Nodes In Network  
+`/nodes`  
+- Get Node Balance  
+`/balance`  
+- Get Network State  
+`/network`  
+- Get Blockchain State  
+`/blockchain`  
 - Create New Block  
-```$ makers new```
+`/crate_new_block`  
 ## Progress
 - 🥚 0~30%
 - 🐥 31~60%
