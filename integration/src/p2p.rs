@@ -49,7 +49,7 @@ impl Network {
             println!("default port is open");
             let port = random_port();
             endpoint.push_str(&port);
-            let res = add_node_to_network(&original_endpoint, &endpoint);
+            let res = join_network(&original_endpoint, &endpoint);
             println!("{:?}", res.body);
             // for i in 0..res.body.len() {
             //     nodes.push(res.body[i]);
@@ -101,7 +101,7 @@ fn throw_request(endpoint: &str, request: Throw) -> Request {
 fn post_node(endpoint: &str, node: Add) -> Request {
     let request = Throw {
         method: method::POST.to_string(),
-        path: "/join".to_string(),
+        path: "/add".to_string(),
         body: json!(node).to_string()
     };
     throw_request(endpoint, request)
@@ -120,4 +120,19 @@ fn add_block_to_blockchain(endpoint: &str, block: Block) -> Request {
         body: json!(block).to_string()
     };
     throw_request(endpoint, request)
+}
+
+fn add_node(endpoint: &str, node: Add) -> Request {
+    let request = Throw {
+        method: method::POST.to_string(),
+        path: "/join".to_string(),
+        body: json!(node).to_string()
+    };
+    throw_request(endpoint, request)
+}
+
+fn join_network(endpoint: &str, node: &str) -> Request {
+    add_node(endpoint, Add {
+        endpoint: node.to_string()
+    })
 }
