@@ -4,6 +4,7 @@ use crate::unit::{current_time, transactions_hash, sha256_hash};
 use crate::response;
 use crate::request;
 use crate::debug::*;
+use crate::utxo::Transaction;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Blockchain {
@@ -20,13 +21,6 @@ pub struct Block {
     nonce: u64,
     hash: String,
     previous_hash: String
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Transaction {
-    amount: u64,
-    sender: String,
-    recipient: String
 }
 
 impl Blockchain {

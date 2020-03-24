@@ -4,10 +4,10 @@ use serde_json::json;
 use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
-use crate::blockchain::{Blockchain, Block, Transaction};
+use crate::blockchain::{Blockchain, Block};
 use crate::p2p::{Network, Add, NetworkInfo, CurrentNodes};
 use crate::response::{Response, PREFIX};
-use crate::utxo::Utxo;
+use crate::utxo::{Utxo, Transaction};
 
 pub struct Server {
     router: Router,
@@ -95,7 +95,8 @@ impl Server {
     pub fn create_new_block(&mut self, req: Request) -> Response {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
-        self.utxo.admin_transfer(&self.wallet.get_address());
+        let transaction = self.utxo.admin_transfer(&self.wallet.get_address());
+        self.blockchain.transactions.push(transaction);
         self.network.block_broadcast(block.clone());
         Response {
             prefix: PREFIX.to_string(),

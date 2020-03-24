@@ -3,17 +3,11 @@ use serde::{Deserialize, Serialize};
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::collections::HashMap;
+use crate::unit::current_time;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Utxo {
     transactions: HashMap<String, HashMap<String, Transaction>>
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Transaction {
-    is_spent: bool,
-    input: Vec<Input>,
-    output: Vec<Output>
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -28,6 +22,14 @@ struct Output {
     amount: u64
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Transaction {
+    is_spent: bool,
+    timestamp: u64,
+    input: Vec<Input>,
+    output: Vec<Output>
+}
+
 impl Utxo {
     pub fn new() -> Utxo {
         Utxo {
@@ -35,10 +37,11 @@ impl Utxo {
         }
     }
 
-    pub fn admin_transfer(&mut self, recipient: &str) -> String {
+    pub fn admin_transfer(&mut self, recipient: &str) -> Transaction {
         let input = Input {
             transaction: Transaction {
                 is_spent: true,
+                timestamp: current_time(),
                 input: Vec::new(),
                 output: Vec::new()
             },
@@ -50,6 +53,7 @@ impl Utxo {
         };
         let mut transaction = Transaction {
             is_spent: false,
+            timestamp: current_time(),
             input: Vec::new(),
             output: Vec::new()
         };
@@ -57,7 +61,7 @@ impl Utxo {
         transaction.output.push(output);
         let transaction_hash = transaction_hash(&json!(transaction).to_string());
         self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(transaction_hash.to_string(), transaction.clone());
-        transaction_hash
+        transaction
     }
 
     pub fn transfer(&mut self, tx_hash: &str, output_index: u8, sender: &str, recipient: &str, amount: u64) -> String {
@@ -79,6 +83,7 @@ impl Utxo {
                     };
                     let mut transaction = Transaction {
                         is_spent: false,
+                        timestamp: current_time(),
                         input: Vec::new(),
                         output: Vec::new()
                     };
