@@ -96,7 +96,8 @@ impl Server {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
         let transaction = self.utxo.admin_transfer(&self.wallet.get_address());
-        self.blockchain.transactions.push(transaction);
+        self.blockchain.transactions.push(transaction.clone());
+        self.network.transaction_broadcast(transaction);
         self.network.block_broadcast(block.clone());
         Response {
             prefix: PREFIX.to_string(),
@@ -115,11 +116,11 @@ impl Server {
     }
 
     pub fn send_transaction(&mut self, req: Request) -> Response {
-        // println!("{:?}", req);
         let transaction: Transaction = serde_json::from_str(&req.body).unwrap();
         // println!("{:?}", transaction);
         let transaction_json = json!(&transaction);
-        self.blockchain.transactions.push(transaction);
+        self.blockchain.transactions.push(transaction.clone());
+        println!("{:?}", self.blockchain);
         Response {
             prefix: PREFIX.to_string(),
             body: transaction_json.to_string()

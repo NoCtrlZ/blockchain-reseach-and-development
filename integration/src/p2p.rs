@@ -8,6 +8,7 @@ use crate::blockchain::Block;
 use crate::response::Response;
 use crate::request::Request;
 use crate::unit::{is_open, random_port, stream_to_string};
+use crate::utxo::Transaction;
 
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
@@ -84,6 +85,12 @@ impl Network {
         }
     }
 
+    pub fn transaction_broadcast(&mut self, transaction: Transaction) {
+        for i in 0..self.nodes.len() {
+            add_transaction_to_blockchain(&self.nodes[i], transaction.clone());
+        }
+    }
+
     pub fn network_json(&self) -> String {
         let network = json!(&self);
         network.to_string()
@@ -141,4 +148,13 @@ fn join_network(endpoint: &str, node: &str) -> Request {
     add_node(endpoint, Add {
         endpoint: node.to_string()
     })
+}
+
+fn add_transaction_to_blockchain(endpoint: &str, transaction: Transaction) -> Request {
+    let request = Throw {
+        method: method::POST.to_string(),
+        path: "/send_transaction".to_string(),
+        body: json!(transaction).to_string()
+    };
+    throw_request(endpoint, request)
 }
