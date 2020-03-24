@@ -35,6 +35,11 @@ pub struct Add {
     pub endpoint: String
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct CurrentNodes {
+    pub nodes: Vec<String>
+}
+
 mod method {
     pub const GET: &str = "GET ";
     pub const POST: &str = "POST ";
@@ -50,10 +55,11 @@ impl Network {
             let port = random_port();
             endpoint.push_str(&port);
             let res = join_network(&original_endpoint, &endpoint);
-            println!("{:?}", res.body);
-            // for i in 0..res.body.len() {
-            //     nodes.push(res.body[i]);
-            // }
+            let body: CurrentNodes = serde_json::from_str(&res.body).unwrap();
+            println!("{:?}", body);
+            for i in 0..body.nodes.len() {
+                nodes.push(body.nodes[i].clone());
+            }
             nodes.push(original_endpoint.to_string());
             println!("I am node listening on {}!", &port);
         } else {

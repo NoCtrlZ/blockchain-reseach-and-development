@@ -5,7 +5,7 @@ use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Block, Transaction};
-use crate::p2p::{Network, Add, NetworkInfo};
+use crate::p2p::{Network, Add, NetworkInfo, CurrentNodes};
 use crate::response::{Response, PREFIX};
 use crate::utxo::Utxo;
 
@@ -138,7 +138,9 @@ impl Server {
     pub fn join(&mut self, req: Request) -> Response {
         let body: Add = serde_json::from_str(&req.body).unwrap();
         println!("add {} to network", body.endpoint);
-        let current_nodes = self.network.nodes.clone();
+        let current_nodes = CurrentNodes {
+            nodes: self.network.nodes.clone()
+        };
         self.network.broadcast(&body.endpoint);
         self.network.nodes.push(body.endpoint.clone());
         Response {
