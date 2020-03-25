@@ -2,6 +2,7 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
+use std::any::type_name;
 
 #[derive(Debug)]
 struct Tree {
@@ -81,6 +82,7 @@ impl Tree {
             left.parent = Box::new(Some(parent.clone()));
             left.sibling = Box::new(Some(right.clone()));
             left.position = "left".to_string();
+            // println!("{:?}", left.sibling.clone());
 
             right.parent = Box::new(Some(parent.clone()));
             right.sibling = Box::new(Some(left.clone()));
@@ -92,7 +94,10 @@ impl Tree {
             left.parent = Box::new(Some(parent.clone()));
             right.parent = Box::new(Some(parent.clone()));
             new_layer.push(parent);
-            if(self.layer.len() == self.leaves.len()) {
+            if self.layer.len() == self.leaves.len() {
+                self.leaves[i * 2] = left;
+                self.leaves[(i * 2) + 1] = right;
+            } else {
                 self.leaves[i * 2] = left;
                 self.leaves[(i * 2) + 1] = right;
             }
@@ -115,13 +120,25 @@ impl Tree {
         Err(false)
     }
 
-    // fn get_pass(&self, amount: u64, sender: &str, recipient: &str) {
-    //     let target = self.search(amount: u64, sender: &str, recipient: &str).unwrap();
-    //     let markle_pass = vec![];
-    //     while target.parent == None {
-    //         markle_pass.push(target.)
-    //     }
-    // }
+    fn get_pass(&self, amount: u64, sender: &str, recipient: &str) {
+        let mut target = self.search(amount, sender, recipient).unwrap();
+        // let markle_pass = Vec::new();
+        // loop {
+            match *target.parent {
+                Some(node) => {
+                    println!("{:?}", node.clone());
+                    let sibling = node.sibling;
+                    println!("{:?}", sibling);
+                    // markle_pass.push((sibling.hash, sibling.position));
+                    // target = target.parent;
+                },
+                None => {
+                    // break;
+                }
+            }
+        // }
+        // markle_pass;
+    }
 }
 
 impl Transactions {
@@ -156,7 +173,10 @@ fn main() {
     // println!("{:?}", &tree);
     let merkle_root = tree.build_tree();
     let target = tree.search(25, "alice", "crea").unwrap();
-    println!("{:?}", target.sibling);
+    println!("{:?}", target.parent.unwrap().sibling.clone());
+    let t = tree.get_pass(25, "alice", "crea");
+    // type_of(target.parent);
+    // println!("{:?}", t);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
@@ -176,4 +196,8 @@ fn hash(transaction: &str) -> String {
     let mut sha256 = Sha256::new();
     sha256.input_str(&transaction);
     sha256.result_str()
+}
+
+pub fn type_of<T>(_: T) {
+    println!("{:?}", type_name::<T>());
 }
