@@ -56,6 +56,8 @@ Development about transaction message. Signing transaction with private key, iss
 Development about merkle tree which is data structure enables us to summarize and verify the transactions. Wallet has summarized transactions and checks whether they are altered.
 ### 🦅utxo
 Development about uxto which is data structure enables us to prevent multiple payment and keep transactions history high secrecy.
+### 🔫cli
+CLI to test integration blockchain server. This has function to issue certificate and send transaction with private key sign.
 ## Test
 ```
 $ makers it
