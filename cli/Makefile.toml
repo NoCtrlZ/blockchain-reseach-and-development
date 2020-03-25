@@ -1,0 +1,6 @@
+[tasks.init]
+description = "Start Blockchain Server"
+script = ['''
+#!/usr/bin/env bash
+cargo run init
+''']

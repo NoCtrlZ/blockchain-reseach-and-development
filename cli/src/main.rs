@@ -1,5 +1,8 @@
 extern crate clap;
 
+mod lamport;
+
+use lamport::Wallet;
 use clap::{Arg, App, SubCommand};
 
 fn main() {
@@ -14,5 +17,6 @@ fn main() {
 
     if let Some(ref matches) = matches.subcommand_matches("init") {
         println!("init wallet");
+        let wallet = Wallet::new();
     }
 }
