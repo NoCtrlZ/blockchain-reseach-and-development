@@ -201,3 +201,18 @@ fn hash(transaction: &str) -> String {
 pub fn type_of<T>(_: T) {
     println!("{:?}", type_name::<T>());
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_build_node() {
+        let mut transactions = Transactions::new();
+        transactions.send_transaction(100, "alice", "bob");
+        transactions.send_transaction(50, "alice", "bob");
+        let leaves = transactions.transactions_to_leaves();
+        let mut tree = Tree::new(leaves);
+        println!("{:?}", tree);
+    }
+}

@@ -1,0 +1,6 @@
+[tasks.ts]
+description = "Start Blockchain Server"
+script = ['''
+#!/usr/bin/env bash
+cargo test -- --nocapture
+''']
