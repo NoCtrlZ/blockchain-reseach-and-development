@@ -80,8 +80,8 @@ impl Tree {
             };
             self.assign_node(i);
             // println!("{:?}", left.sibling);
-            parent.left = Box::new(Some(self.layer[(i * 2)].clone()));
-            parent.right = Box::new(Some(self.layer[(i * 2) + 1].clone()));
+            parent.left = Box::new(Some(self.get_node(i * 2)));
+            parent.right = Box::new(Some(self.get_node((i * 2) + 1)));
 
             self.parent_assign(i, parent.clone());
 
@@ -94,7 +94,6 @@ impl Tree {
                 if let Some(leave) = self.leaves.get_mut((i * 2) + 1) {
                     *leave = self.layer[(i * 2) + 1].clone()
                 }
-                println!("{:?}", self.leaves)
             }
         }
         self.layer.clear();
@@ -156,12 +155,12 @@ impl Tree {
 
     fn get_pass(&self, amount: u64, sender: &str, recipient: &str) {
         let mut target = self.search(amount, sender, recipient).unwrap();
-        println!("{:?}", &target);
+        // println!("{:?}", *target.parent);
         // let markle_pass = Vec::new();
         // loop {
             match *target.parent {
                 Some(node) => {
-                    println!("{:?}", node.clone());
+                    println!("{:?}", node);
                     let sibling = node.sibling;
                     // println!("{:?}", sibling);
                     // markle_pass.push((sibling.hash, sibling.position));
@@ -208,11 +207,11 @@ fn main() {
     // println!("{:?}", &tree);
     let merkle_root = tree.build_tree();
     // println!("{:?}", merkle_root);
-    let target = tree.search(50, "alice", "bob").unwrap();
-    println!("{:?}", target.clone());
+    // let target = tree.search(50, "alice", "bob").unwrap();
+    // println!("{:?}", target.clone());
     let t = tree.get_pass(50, "alice", "bob");
     // type_of(target.parent);
-    println!("{:?}", t);
+    // println!("{:?}", t);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
