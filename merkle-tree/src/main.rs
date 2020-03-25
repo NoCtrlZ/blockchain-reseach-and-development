@@ -55,14 +55,15 @@ impl Tree {
         }
     }
 
-    fn build_tree(&mut self) -> String {
+    fn build_tree(&mut self) -> Node {
         while self.layer.len() != 1 {
             self.build_layer();
         }
-        self.layer[0].hash.clone()
+        self.layer[0].clone()
     }
 
     fn build_layer(&mut self) {
+        println!("{:?}", self.layer.len() == self.leaves.len());
         let mut new_layer = Vec::new();
         if self.layer.len() % 2 == 1 {
             self.layer.push(self.layer.last().unwrap().clone());
@@ -79,24 +80,24 @@ impl Tree {
                 data: format!("{}{}", &left.hash, &right.hash).to_string(),
                 hash: hash(&format!("{}{}", &left.hash, &right.hash).to_string())
             };
-            left.parent = Box::new(Some(parent.clone()));
             left.sibling = Box::new(Some(right.clone()));
             left.position = "left".to_string();
-            // println!("{:?}", left.sibling.clone());
-
-            right.parent = Box::new(Some(parent.clone()));
             right.sibling = Box::new(Some(left.clone()));
             right.position = "right".to_string();
-            left.sibling = Box::new(Some(right.clone()));
-
+            // println!("{:?}", left.sibling.clone());
             parent.left = Box::new(Some(left.clone()));
             parent.right = Box::new(Some(right.clone()));
-            left.parent = Box::new(Some(parent.clone()));
+
             right.parent = Box::new(Some(parent.clone()));
+            left.parent = Box::new(Some(parent.clone()));
+
+            right.sibling = Box::new(Some(left.clone()));
+            left.sibling = Box::new(Some(right.clone()));
             new_layer.push(parent);
             if self.layer.len() == self.leaves.len() {
                 self.leaves[i * 2] = left;
                 self.leaves[(i * 2) + 1] = right;
+                // println!("{:?}", self.leaves)
             } else {
                 self.leaves[i * 2] = left;
                 self.leaves[(i * 2) + 1] = right;
@@ -126,9 +127,9 @@ impl Tree {
         // loop {
             match *target.parent {
                 Some(node) => {
-                    println!("{:?}", node.clone());
+                    // println!("{:?}", node.clone());
                     let sibling = node.sibling;
-                    println!("{:?}", sibling);
+                    // println!("{:?}", sibling);
                     // markle_pass.push((sibling.hash, sibling.position));
                     // target = target.parent;
                 },
@@ -172,9 +173,10 @@ fn main() {
     let mut tree = Tree::new(leaves);
     // println!("{:?}", &tree);
     let merkle_root = tree.build_tree();
-    let target = tree.search(25, "alice", "crea").unwrap();
-    println!("{:?}", target.parent.unwrap().sibling.clone());
-    let t = tree.get_pass(25, "alice", "crea");
+    println!("{:?}", merkle_root);
+    let target = tree.search(50, "alice", "bob").unwrap();
+    // println!("{:?}", target.parent.clone());
+    // let t = tree.get_pass(50, "alice", "bob");
     // type_of(target.parent);
     // println!("{:?}", t);
 }
@@ -182,14 +184,14 @@ fn main() {
 fn send_transactions(transactions: &mut Transactions) {
     transactions.send_transaction(100, "alice", "bob");
     transactions.send_transaction(50, "alice", "bob");
-    transactions.send_transaction(25, "alice", "bob");
-    transactions.send_transaction(12, "alice", "bob");
-    transactions.send_transaction(100, "alice", "crea");
-    transactions.send_transaction(50, "alice", "crea");
-    transactions.send_transaction(25, "alice", "crea");
-    transactions.send_transaction(12, "alice", "crea");
-    transactions.send_transaction(100, "bod", "crea");
-    transactions.send_transaction(100, "leon", "jack");
+    // transactions.send_transaction(25, "alice", "bob");
+    // transactions.send_transaction(12, "alice", "bob");
+    // transactions.send_transaction(100, "alice", "crea");
+    // transactions.send_transaction(50, "alice", "crea");
+    // transactions.send_transaction(25, "alice", "crea");
+    // transactions.send_transaction(12, "alice", "crea");
+    // transactions.send_transaction(100, "bod", "crea");
+    // transactions.send_transaction(100, "leon", "jack");
 }
 
 fn hash(transaction: &str) -> String {
