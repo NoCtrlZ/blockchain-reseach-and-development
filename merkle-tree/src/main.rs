@@ -69,43 +69,76 @@ impl Tree {
             self.layer.push(self.layer.last().unwrap().clone());
         }
         for i in 0..self.layer.len() / 2 {
-            let mut left = self.layer[i * 2].clone();
-            let mut right = self.layer[(i * 2) + 1].clone();
             let mut parent = Node {
                 left: Box::new(None),
                 right: Box::new(None),
                 parent: Box::new(None),
                 sibling: Box::new(None),
                 position: "".to_string(),
-                data: format!("{}{}", &left.hash, &right.hash).to_string(),
-                hash: hash(&format!("{}{}", &left.hash, &right.hash).to_string())
+                data: format!("{}{}", &self.layer[i].hash, &self.layer[i].hash).to_string(),
+                hash: hash(&format!("{}{}", &self.layer[i].hash, &self.layer[i].hash).to_string())
             };
-            left.sibling = Box::new(Some(right.clone()));
-            left.position = "left".to_string();
-            right.sibling = Box::new(Some(left.clone()));
-            right.position = "right".to_string();
+            self.assign_node(i);
+            let left = self.layer[(i * 2)].clone();
+            let right = self.layer[(i * 2) + 1].clone();
             // println!("{:?}", left.sibling);
             parent.left = Box::new(Some(left.clone()));
             parent.right = Box::new(Some(right.clone()));
 
-            right.parent = Box::new(Some(parent.clone()));
-            left.parent = Box::new(Some(parent.clone()));
+            self.parent_assign(i, parent.clone());
 
-            right.sibling = Box::new(Some(left.clone()));
-            left.sibling = Box::new(Some(right.clone()));
             // println!("{:?}", left);
             new_layer.push(parent);
             if self.layer.len() == self.leaves.len() {
                 if let Some(leave) = self.leaves.get_mut(i * 2) {
-                    *leave = left
+                    *leave = left.clone()
                 }
                 if let Some(leave) = self.leaves.get_mut((i * 2) + 1) {
-                    *leave = right
+                    *leave = right.clone()
                 }
                 // println!("{:?}", self.leaves)
             }
         }
-        self.layer = new_layer;
+        self.layer.clear();
+        for i in 0..new_layer.len() {
+            self.layer.push(new_layer[i].clone());
+        };
+    }
+
+    fn parent_assign(&mut self, i: usize, parent: Node) {
+        self.parent_assign_left(i, parent.clone());
+        self.parent_assign_rigth(i, parent);
+    }
+
+    fn parent_assign_left(&mut self, i: usize, parent: Node) {
+        let mut left = self.layer.get_mut(i * 2).unwrap();
+        left.parent = Box::new(Some(parent));
+    }
+
+    fn parent_assign_rigth(&mut self, i: usize, parent: Node) {
+        let mut right = self.layer.get_mut((i * 2) + 1).unwrap();
+        right.parent = Box::new(Some(parent));
+    }
+
+    fn assign_node(&mut self, i: usize) {
+        self.assign_left(i, self.get_node((i * 2) + 1));
+        self.assign_right(i, self.get_node(i * 2));
+    }
+
+    fn assign_left(&mut self, i: usize, right_node: Node) {
+        let mut left = self.layer.get_mut(i * 2).unwrap();
+        left.sibling = Box::new(Some(right_node));
+        left.position = "left".to_string();
+    }
+
+    fn assign_right(&mut self, i: usize, left_node: Node) {
+        let mut right = self.layer.get_mut((i * 2) + 1).unwrap();
+        right.sibling = Box::new(Some(left_node));
+        right.position = "right".to_string();
+    }
+
+    fn get_node(&self, i: usize) -> Node {
+        self.layer[(i)].clone()
     }
 
     fn search(&self, amount: u64, sender: &str, recipient: &str) -> Result<Node, bool> {
@@ -115,7 +148,7 @@ impl Tree {
             recipient: recipient.to_string()
         }).to_string();
         for i in 0..self.leaves.len() {
-            // println!("{:?}", self.leaves[i]);
+            println!("{:?}", self.leaves[i]);
             if hash(&transaction) == self.leaves[i].hash {
                 return Ok(self.leaves[i].clone());
             }
@@ -131,7 +164,7 @@ impl Tree {
                 Some(node) => {
                     // println!("{:?}", node.clone());
                     let sibling = node.sibling;
-                    println!("{:?}", sibling);
+                    // println!("{:?}", sibling);
                     // markle_pass.push((sibling.hash, sibling.position));
                     // target = target.parent;
                 },
@@ -177,10 +210,10 @@ fn main() {
     let merkle_root = tree.build_tree();
     // println!("{:?}", merkle_root);
     let target = tree.search(50, "alice", "bob").unwrap();
-    println!("{:?}", target.sibling.clone());
+    // println!("{:?}", target.sibling.clone());
     let t = tree.get_pass(50, "alice", "bob");
     // type_of(target.parent);
-    println!("{:?}", t);
+    // println!("{:?}", t);
 }
 
 fn send_transactions(transactions: &mut Transactions) {
