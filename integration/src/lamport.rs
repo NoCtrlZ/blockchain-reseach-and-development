@@ -52,7 +52,7 @@ impl Wallet {
         let mut message = message_creation(plain_text);
         let mut signature = Vec::with_capacity(SIGNATURE_LENGT);
         for i in 0..SIGNATURE_LENGT {
-            match message.chars().nth(i).unwrap() {
+            match message.chars().nth(i).expect("fail to get char from message") {
                 '1' => { signature.push(self.private_key.pairs[i].0) }
                 '0' => { signature.push(self.private_key.pairs[i].1) }
                 _ => panic!("this is not binary")
@@ -76,7 +76,7 @@ impl PublicKey {
     pub fn verify(&self, plain_text: &str, signature: Vec<U256>) -> bool {
         let mut message = message_creation(plain_text);
         for i in 0..SIGNATURE_LENGT {
-            match message.chars().nth(i).unwrap() {
+            match message.chars().nth(i).expect("fail to get char from message") {
                 '1' => { if !compare_with_pub(signature[i], self.pairs[i].0) {panic!("invalid signature")}}
                 '0' => { if !compare_with_pub(signature[i], self.pairs[i].1) {panic!("invalid signature")}}
                 _ => panic!("this is not binary")
@@ -143,8 +143,8 @@ fn from_str(value: &str) -> U256 {
     use rustc_hex::FromHex;
 
     let bytes: Vec<u8> = match value.len() % 2 == 0 {
-        true => value.from_hex().unwrap(),
-        false => ("0".to_owned() + value).from_hex().unwrap()
+        true => value.from_hex().expect("fail to convert bytes to hex"),
+        false => ("0".to_owned() + value).from_hex().expect("fail to add 0 to value")
     };
 
     let bytes_ref: &[u8] = &bytes;

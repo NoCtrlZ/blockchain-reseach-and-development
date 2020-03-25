@@ -15,8 +15,8 @@ impl Response {
         let mut response = default_response(&self.prefix, &self.body.len());
         // println!("{:?}", response);
         response.push_str(&format!("{}{}", "\r\n\r\n", body));
-        stream.write(response.as_bytes()).unwrap();
-        stream.flush().unwrap();
+        stream.write(response.as_bytes()).expect("fail to write bytes");
+        stream.flush().expect("fail to flush stream");
     }
 }
 

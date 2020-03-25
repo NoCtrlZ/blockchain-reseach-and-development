@@ -48,7 +48,7 @@ impl Blockchain {
     }
 
     pub fn latest_block_hash(&self) -> &str {
-        &self.entity.last().unwrap().hash
+        &self.entity.last().expect("fail to get last block").hash
     }
 
     pub fn block_hash(&self) -> String {

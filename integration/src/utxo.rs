@@ -90,7 +90,7 @@ impl Utxo {
                     transaction.input.push(input);
                     transaction.output.push(output);
                     transaction.output.push(sendback);
-                    self.transactions.get_mut(sender).unwrap().get_mut(tx_hash).unwrap().is_spent = true;
+                    self.transactions.get_mut(sender).expect("fail to get address history").get_mut(tx_hash).expect("fail to get mut tx").is_spent = true;
                     let tx_hash = transaction_hash(&json!(transaction).to_string());
                     self.transactions.entry(recipient.to_string()).or_insert_with(HashMap::new).insert(tx_hash.to_string(), transaction.clone());
                     self.transactions.entry(sender.to_string()).or_insert_with(HashMap::new).insert(tx_hash.to_string(), transaction.clone());

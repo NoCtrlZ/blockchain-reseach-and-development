@@ -41,9 +41,9 @@ impl Server {
 
     pub fn start(&mut self) {
         let addr = self.network.endpoint.clone();
-        let listener = TcpListener::bind(addr).unwrap();
+        let listener = TcpListener::bind(addr).expect("fail to bind tcp listener");
         for stream in listener.incoming() {
-            self.handle(&mut stream.unwrap());
+            self.handle(&mut stream.expect("fail to read stream"));
         }
     }
 
@@ -95,10 +95,10 @@ impl Server {
     pub fn create_new_block(&mut self, req: Request) -> Response {
         // println!("create new block");
         let block = self.blockchain.proof_of_work();
+        self.network.block_broadcast(block.clone());
         let transaction = self.utxo.admin_transfer(&self.wallet.get_address());
         self.blockchain.transactions.push(transaction.clone());
         self.network.transaction_broadcast(transaction);
-        self.network.block_broadcast(block.clone());
         Response {
             prefix: PREFIX.to_string(),
             body: json!(block).to_string()
@@ -106,7 +106,7 @@ impl Server {
     }
 
     pub fn add_block(&mut self, req: Request) -> Response {
-        let block: Block = serde_json::from_str(&req.body).unwrap();
+        let block: Block = serde_json::from_str(&req.body).expect("fail to convert block to json");
         self.blockchain.entity.push(block.clone());
         self.blockchain.transactions.clear();
         Response {
@@ -116,11 +116,11 @@ impl Server {
     }
 
     pub fn send_transaction(&mut self, req: Request) -> Response {
-        let transaction: Transaction = serde_json::from_str(&req.body).unwrap();
+        let transaction: Transaction = serde_json::from_str(&req.body).expect("fail to convert transaction to json");
         // println!("{:?}", transaction);
         let transaction_json = json!(&transaction);
         self.blockchain.transactions.push(transaction.clone());
-        println!("{:?}", self.blockchain);
+        // println!("{:?}", self.blockchain);
         Response {
             prefix: PREFIX.to_string(),
             body: transaction_json.to_string()
@@ -128,7 +128,7 @@ impl Server {
     }
 
     pub fn add(&mut self, req: Request) -> Response {
-        let body: Add = serde_json::from_str(&req.body).unwrap();
+        let body: Add = serde_json::from_str(&req.body).expect("fail to convert add to json");
         println!("add {} to network", body.endpoint);
         self.network.nodes.push(body.endpoint);
         Response {
@@ -138,7 +138,7 @@ impl Server {
     }
 
     pub fn join(&mut self, req: Request) -> Response {
-        let body: Add = serde_json::from_str(&req.body).unwrap();
+        let body: Add = serde_json::from_str(&req.body).expect("fail to convert add to json");
         println!("add {} to network", body.endpoint);
         let current_nodes = CurrentNodes {
             nodes: self.network.nodes.clone()

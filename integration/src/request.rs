@@ -63,7 +63,7 @@ impl Request {
 
 fn convert(stream: &mut TcpStream) -> String {
     let mut buffer = [0; 512];
-    stream.read(&mut buffer).unwrap();
+    stream.read(&mut buffer).expect("fail to read buffer from stream");
     // println!("{:?}", &buffer[..]);
     String::from_utf8_lossy(&buffer[..])
         .trim_matches(char::from(0))

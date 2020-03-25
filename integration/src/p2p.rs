@@ -56,7 +56,7 @@ impl Network {
             let port = random_port();
             endpoint.push_str(&port);
             let res = join_network(&original_endpoint, &endpoint);
-            let body: CurrentNodes = serde_json::from_str(&res.body).unwrap();
+            let body: CurrentNodes = serde_json::from_str(&res.body).expect("fail to pase current node to json");
             println!("{:?}", body);
             for i in 0..body.nodes.len() {
                 nodes.push(body.nodes[i].clone());
@@ -106,8 +106,8 @@ fn request_contents(request: Throw) -> String {
 }
 
 fn throw_request(endpoint: &str, request: Throw) -> Request {
-    let mut stream = TcpStream::connect(endpoint).unwrap();
-    stream.write(request_contents(request).as_bytes()).unwrap();
+    let mut stream = TcpStream::connect(endpoint).expect("fail to connect tcp stream");
+    stream.write(request_contents(request).as_bytes()).expect("fail to write response");
     Request::parse(&mut stream)
 }
 
