@@ -62,7 +62,7 @@ impl Request {
 }
 
 fn convert(stream: &mut TcpStream) -> String {
-    // todo change read to end
+    // todo change read to end or get content type length
     let mut buffer = [0; 5000];
     stream.read(&mut buffer).expect("fail to read buffer from stream");
     // println!("{:?}", &buffer[..]);
