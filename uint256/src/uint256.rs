@@ -14,3 +14,14 @@ impl From<u64> for u256 {
         u256(numbers)
     }
 }
+
+impl From<i64> for u256 {
+    fn from(number: i64) -> Self {
+        match number >= 0 {
+            true => From::from(number as u64),
+            false => {
+                panic!("can't convert negative number");
+            }
+        }
+    }
+}
