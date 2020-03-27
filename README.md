@@ -16,6 +16,8 @@ You can access blockchain information on [`http://localhost:3000`](http://localh
 `/nodes`  
 - Get Node Balance  
 `/balance`  
+- Consensus  
+`/consensus`  
 - Get Network State  
 `/network`  
 - Get Blockchain State  

@@ -136,6 +136,7 @@ impl Server {
                 self.network.nodes.clear();
                 self.blockchain.entity.clear();
                 self.blockchain.transactions.clear();
+                // todo use macro
                 for i in 0..state.nodes.len() {
                     nodes.push(state.nodes[i].clone());
                 }
