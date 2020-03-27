@@ -5,6 +5,7 @@ use rand::Rng;
 use std::net::TcpListener;
 use std::net::TcpStream;
 use std::io::prelude::*;
+use crate::blockchain::Block;
 
 pub fn current_time() -> u64 {
     let now = SystemTime::now();
@@ -48,4 +49,15 @@ pub fn difficulty_checker(difficulty: u8) -> String {
         start_with.push_str("0");
     }
     start_with
+}
+
+pub fn block_is_valid(blocks: Vec<Block>) -> bool {
+    for i in 1..blocks.len() {
+        let start_with = difficulty_checker(blocks[i].difficulty);
+        let hash = sha256_hash(&blocks[i].hash, &blocks[i].previous_hash, &blocks[i].nonce.to_string());
+        if start_with != &hash[..blocks[i].difficulty as usize] {
+            return false;
+        }
+    }
+    true
 }

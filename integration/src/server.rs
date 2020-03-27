@@ -9,7 +9,7 @@ use crate::blockchain::{Blockchain, Block};
 use crate::p2p::{Network, Add, NetworkInfo, CurrentState};
 use crate::response::{Response, PREFIX};
 use crate::utxo::{Utxo, Transaction};
-use crate::unit::{difficulty_checker, sha256_hash};
+use crate::unit::{difficulty_checker, sha256_hash, block_is_valid};
 
 pub struct Server {
     router: Router,
@@ -31,6 +31,7 @@ impl Server {
         let wallet = Wallet::new();
         let (network, blocks, transactions) = Network::new();
         println!("the address is {:?}", &wallet.get_address());
+        if !block_is_valid(blocks.clone()) {panic!("blockchain is invalid")}
         let mut server = Server {
             router: router,
             blockchain: Blockchain {
