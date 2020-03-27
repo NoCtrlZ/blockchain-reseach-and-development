@@ -1,8 +1,6 @@
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use crate::unit::{current_time, transactions_hash, sha256_hash};
-use crate::response;
-use crate::request;
 use crate::debug::*;
 use crate::utxo::Transaction;
 
@@ -24,17 +22,6 @@ pub struct Block {
 }
 
 impl Blockchain {
-    pub fn new() -> Blockchain {
-        let default_difficulty = 3;
-        let mut blockchain = Blockchain {
-            entity: Vec::new(),
-            transactions: Vec::new(),
-            difficulty: default_difficulty,
-        };
-        blockchain.create_genesis_block();
-        blockchain
-    }
-
     pub fn create_genesis_block(&mut self) {
         let block = Block {
             index: 0,

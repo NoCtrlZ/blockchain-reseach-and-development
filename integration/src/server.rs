@@ -29,7 +29,6 @@ impl Server {
         let default_difficulty = 3;
         let wallet = Wallet::new();
         let (network, blocks, transactions) = Network::new();
-        let utxo = Utxo::new();
         println!("the address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
@@ -40,7 +39,7 @@ impl Server {
             },
             network: network,
             wallet: wallet,
-            utxo: utxo
+            utxo: Utxo::new()
         };
         if blocks.len() == 0 {
             server.blockchain.create_genesis_block();
@@ -74,22 +73,20 @@ impl Server {
     }
 
     pub fn get_all(&mut self, req: Request) -> Response {
-        let address = self.wallet.get_address();
         Response {
             prefix: PREFIX.to_string(),
             body: json!({
                 "blockchain": self.blockchain,
                 "network": self.network,
-                "address": address
+                "address": self.wallet.get_address()
             }).to_string()
         }
     }
 
     pub fn get_blockchain(&mut self, req: Request) -> Response {
-        let whole_blockchain = self.blockchain.blockchain_json();
         Response {
             prefix: PREFIX.to_string(),
-            body: whole_blockchain.to_string()
+            body: self.blockchain.blockchain_json().to_string()
         }
     }
 
@@ -105,10 +102,9 @@ impl Server {
     }
 
     pub fn get_network(&mut self, req: Request) -> Response {
-        let whole_network = self.network.network_json();
         Response {
             prefix: PREFIX.to_string(),
-            body: whole_network.to_string()
+            body: self.network.network_json().to_string()
         }
     }
 
@@ -130,25 +126,13 @@ impl Server {
         match longest_chain_node != self.network.endpoint {
             true => {
                 let state = self.network.get_longest_node(&longest_chain_node);
-                let mut nodes = vec![];
-                let mut blocks = vec![];
-                let mut transactions = vec![];
                 self.network.nodes.clear();
                 self.blockchain.entity.clear();
                 self.blockchain.transactions.clear();
                 // todo use macro
-                for i in 0..state.nodes.len() {
-                    nodes.push(state.nodes[i].clone());
-                }
-                for i in 0..state.blocks.len() {
-                    blocks.push(state.blocks[i].clone());
-                }
-                for i in 0..state.transactions.len() {
-                    transactions.push(state.transactions[i].clone());
-                }
-                self.network.nodes = nodes;
-                self.blockchain.entity = blocks;
-                self.blockchain.transactions = transactions;
+                self.network.nodes = state.nodes;
+                self.blockchain.entity = state.blocks;
+                self.blockchain.transactions = state.transactions;
                 Response {
                     prefix: PREFIX.to_string(),
                     body: format!("sync with node listening on {}", longest_chain_node).to_string()

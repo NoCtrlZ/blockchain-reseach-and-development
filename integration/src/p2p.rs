@@ -1,13 +1,10 @@
 use serde_json::json;
 use serde::{Deserialize, Serialize};
-use rand::Rng;
-use std::net::TcpListener;
 use std::net::TcpStream;
 use std::io::prelude::*;
 use crate::blockchain::Block;
-use crate::response::Response;
 use crate::request::Request;
-use crate::unit::{is_open, random_port, stream_to_string};
+use crate::unit::{is_open, random_port};
 use crate::utxo::Transaction;
 use crate::server::NodeInfo;
 
@@ -53,29 +50,25 @@ impl Network {
     pub fn new() -> (Network, Vec<Block>, Vec<Transaction>) {
         let original_endpoint = "127.0.0.1:3000";
         let mut endpoint = "127.0.0.1:".to_string();
-        let mut nodes = vec![];
         if is_open(&original_endpoint) {
             println!("default port is open");
             let port = random_port();
             endpoint.push_str(&port);
             let res = join_network(&original_endpoint, &endpoint);
-            let body: CurrentState = serde_json::from_str(&res.body).expect("fail to pase current node to json");
+            let mut body: CurrentState = serde_json::from_str(&res.body).expect("fail to pase current node to json");
             // println!("{:?}", body);
-            for i in 0..body.nodes.len() {
-                nodes.push(body.nodes[i].clone());
-            }
-            nodes.push(original_endpoint.to_string());
+            body.nodes.push(original_endpoint.to_string());
             println!("I am node listening on {}!", &port);
             return (Network {
                 endpoint: endpoint,
-                nodes: nodes
+                nodes: body.nodes
             }, body.blocks.clone(), body.transactions.clone());
         } else {
             endpoint.push_str("3000");
             println!("I am original node!");
             return (Network {
                 endpoint: endpoint,
-                nodes: nodes
+                nodes: Vec::new()
             }, Vec::new(), Vec::new());
         }
     }

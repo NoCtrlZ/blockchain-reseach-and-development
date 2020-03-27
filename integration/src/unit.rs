@@ -38,6 +38,6 @@ pub fn is_open(endpoint: &str) -> bool {
 
 pub fn stream_to_string(mut stream: TcpStream) -> String {
     let mut buffer = Vec::new();
-    stream.read_to_end(&mut buffer);
+    stream.read_to_end(&mut buffer).expect("fail to read stream to end");
     String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
