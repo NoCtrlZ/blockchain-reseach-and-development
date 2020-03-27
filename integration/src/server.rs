@@ -21,14 +21,14 @@ impl Server {
     pub fn new(router: Router) -> Server {
         let default_difficulty = 3;
         let wallet = Wallet::new();
-        let (network, blocks) = Network::new();
+        let (network, blocks, transactions) = Network::new();
         let utxo = Utxo::new();
         println!("the address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
             blockchain: Blockchain {
                 entity: blocks.clone(),
-                transactions: Vec::new(),
+                transactions: transactions,
                 difficulty: default_difficulty,
             },
             network: network,
@@ -144,7 +144,8 @@ impl Server {
         println!("add {} to network", body.endpoint);
         let current_nodes = CurrentState {
             nodes: self.network.nodes.clone(),
-            blocks: self.blockchain.entity.clone()
+            blocks: self.blockchain.entity.clone(),
+            transactions: self.blockchain.transactions.clone()
         };
         self.network.broadcast(&body.endpoint);
         self.network.nodes.push(body.endpoint.clone());
