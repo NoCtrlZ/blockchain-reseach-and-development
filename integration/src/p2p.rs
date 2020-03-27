@@ -99,16 +99,21 @@ impl Network {
     }
 
     pub fn consensus_broadcast(&self, length: usize, endpoint: &str) -> String {
-        let mut longest_chain_node = endpoint;
+        let mut longest_chain_node = endpoint.to_string();
         let mut max_block_length = length;
         for i in 0..self.nodes.len() {
             let (length, endpoint) = get_chain_length(&self.nodes[i]);
             if length > max_block_length {
-                longest_chain_node = &endpoint;
+                longest_chain_node = endpoint.clone();
                 max_block_length = length;
             }
         }
         longest_chain_node.to_string()
+    }
+
+    pub fn get_longest_node(&self, endpoint: &str) -> CurrentState {
+        let res = request_state(&endpoint);
+        serde_json::from_str(&res.body).expect("fail to pase current state to json")
     }
 
     pub fn network_json(&self) -> String {
@@ -188,4 +193,13 @@ fn get_chain_length(endpoint: &str) -> (usize, String) {
     let request = throw_request(endpoint, request);
     let body: NodeInfo = serde_json::from_str(&request.body).expect("fail to pase node info to json");
     (body.block_length, body.endpoint.to_string())
+}
+
+pub fn request_state(endpoint: &str) -> Request {
+    let request = Throw {
+        method: method::GET.to_string(),
+        path: "/get_state".to_string(),
+        body: "".to_string()
+    };
+    throw_request(endpoint, request)
 }

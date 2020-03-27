@@ -96,7 +96,7 @@ impl Server {
     pub fn get_node_info(&mut self, req: Request) -> Response {
         let node_info = NodeInfo {
             block_length: self.blockchain.entity.len(),
-            endpoint: self.network.endpoint
+            endpoint: self.network.endpoint.clone()
         };
         Response {
             prefix: PREFIX.to_string(),
@@ -127,6 +127,39 @@ impl Server {
 
     pub fn consensus(&mut self, req: Request) -> Response {
         let longest_chain_node = self.network.consensus_broadcast(self.blockchain.entity.len(), &self.network.endpoint);
+        match longest_chain_node != self.network.endpoint {
+            true => {
+                let state = self.network.get_longest_node(&longest_chain_node);
+                let mut nodes = vec![];
+                let mut blocks = vec![];
+                let mut transactions = vec![];
+                self.network.nodes.clear();
+                self.blockchain.entity.clear();
+                self.blockchain.transactions.clear();
+                for i in 0..state.nodes.len() {
+                    nodes.push(state.nodes[i].clone());
+                }
+                for i in 0..state.blocks.len() {
+                    blocks.push(state.blocks[i].clone());
+                }
+                for i in 0..state.transactions.len() {
+                    transactions.push(state.transactions[i].clone());
+                }
+                self.network.nodes = nodes;
+                self.blockchain.entity = blocks;
+                self.blockchain.transactions = transactions;
+                Response {
+                    prefix: PREFIX.to_string(),
+                    body: format!("sync with node listening on {}", longest_chain_node).to_string()
+                }
+            },
+            false => {
+                Response {
+                    prefix: PREFIX.to_string(),
+                    body: "this node chain is longest".to_string()
+                }
+            }
+        }
     }
 
     pub fn add_block(&mut self, req: Request) -> Response {
@@ -171,6 +204,18 @@ impl Server {
         };
         self.network.broadcast(&body.endpoint);
         self.network.nodes.push(body.endpoint.clone());
+        Response {
+            prefix: PREFIX.to_string(),
+            body: json!(current_nodes).to_string()
+        }
+    }
+
+    pub fn get_state(&mut self, req: Request) -> Response {
+        let current_nodes = CurrentState {
+            nodes: self.network.nodes.clone(),
+            blocks: self.blockchain.entity.clone(),
+            transactions: self.blockchain.transactions.clone()
+        };
         Response {
             prefix: PREFIX.to_string(),
             body: json!(current_nodes).to_string()
