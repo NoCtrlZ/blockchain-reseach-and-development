@@ -37,8 +37,9 @@ pub struct Add {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct CurrentNodes {
-    pub nodes: Vec<String>
+pub struct CurrentState {
+    pub nodes: Vec<String>,
+    pub blocks: Vec<Block>
 }
 
 mod method {
@@ -47,7 +48,7 @@ mod method {
 }
 
 impl Network {
-    pub fn new() -> Network {
+    pub fn new() -> (Network, Vec<Block>) {
         let original_endpoint = "127.0.0.1:3000";
         let mut endpoint = "127.0.0.1:".to_string();
         let mut nodes = vec![];
@@ -56,20 +57,24 @@ impl Network {
             let port = random_port();
             endpoint.push_str(&port);
             let res = join_network(&original_endpoint, &endpoint);
-            let body: CurrentNodes = serde_json::from_str(&res.body).expect("fail to pase current node to json");
+            let body: CurrentState = serde_json::from_str(&res.body).expect("fail to pase current node to json");
             println!("{:?}", body);
             for i in 0..body.nodes.len() {
                 nodes.push(body.nodes[i].clone());
             }
             nodes.push(original_endpoint.to_string());
             println!("I am node listening on {}!", &port);
+            return (Network {
+                endpoint: endpoint,
+                nodes: nodes
+            }, body.blocks.clone());
         } else {
             endpoint.push_str("3000");
             println!("I am original node!");
-        }
-        Network {
-            endpoint: endpoint,
-            nodes: nodes
+            return (Network {
+                endpoint: endpoint,
+                nodes: nodes
+            }, Vec::new());
         }
     }
 

@@ -5,7 +5,7 @@ use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
 use crate::blockchain::{Blockchain, Block};
-use crate::p2p::{Network, Add, NetworkInfo, CurrentNodes};
+use crate::p2p::{Network, Add, NetworkInfo, CurrentState};
 use crate::response::{Response, PREFIX};
 use crate::utxo::{Utxo, Transaction};
 
@@ -21,13 +21,13 @@ impl Server {
     pub fn new(router: Router) -> Server {
         let default_difficulty = 3;
         let wallet = Wallet::new();
-        let network = Network::new();
+        let (network, blocks) = Network::new();
         let utxo = Utxo::new();
         println!("the address is {:?}", &wallet.get_address());
         let mut server = Server {
             router: router,
             blockchain: Blockchain {
-                entity: Vec::new(),
+                entity: blocks.clone(),
                 transactions: Vec::new(),
                 difficulty: default_difficulty,
             },
@@ -35,7 +35,9 @@ impl Server {
             wallet: wallet,
             utxo: utxo
         };
-        server.blockchain.create_genesis_block();
+        if blocks.len() == 0 {
+            server.blockchain.create_genesis_block();
+        }
         server
     }
 
@@ -140,8 +142,9 @@ impl Server {
     pub fn join(&mut self, req: Request) -> Response {
         let body: Add = serde_json::from_str(&req.body).expect("fail to convert add to json");
         println!("add {} to network", body.endpoint);
-        let current_nodes = CurrentNodes {
-            nodes: self.network.nodes.clone()
+        let current_nodes = CurrentState {
+            nodes: self.network.nodes.clone(),
+            blocks: self.blockchain.entity.clone()
         };
         self.network.broadcast(&body.endpoint);
         self.network.nodes.push(body.endpoint.clone());
