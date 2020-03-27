@@ -8,7 +8,7 @@ use crate::utxo::Transaction;
 pub struct Blockchain {
     pub entity: Vec<Block>,
     pub transactions: Vec<Transaction>,
-    pub difficulty: u8
+    pub current_difficulty: u8
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -16,9 +16,10 @@ pub struct Block {
     index: u32,
     timestamp: u64,
     transactions: Vec<Transaction>,
-    nonce: u64,
-    hash: String,
-    previous_hash: String
+    pub nonce: u64,
+    pub hash: String,
+    pub previous_hash: String,
+    pub difficulty: u8
 }
 
 impl Blockchain {
@@ -29,7 +30,8 @@ impl Blockchain {
             transactions: [].to_vec(),
             nonce: 0,
             hash: "genesis block".to_string(),
-            previous_hash: "this is start".to_string()
+            previous_hash: "this is start".to_string(),
+            difficulty: 0
         };
         self.entity.push(block);
     }
@@ -60,7 +62,7 @@ impl Blockchain {
         let start_with = self.difficulty_checker();
         loop {
             let hash = sha256_hash(&current_block_hash, &previous_block_hash, &nonce.to_string());
-            if start_with == &hash[..self.difficulty as usize] {
+            if start_with == &hash[..self.current_difficulty as usize] {
                 break;
             }
             nonce+=1;
@@ -75,7 +77,8 @@ impl Blockchain {
             transactions: self.transactions.clone(),
             nonce: nonce,
             hash: self.block_hash(),
-            previous_hash: (&self.latest_block_hash()).to_string()
+            previous_hash: (&self.latest_block_hash()).to_string(),
+            difficulty: self.current_difficulty.clone()
         };
         let block_log = block.clone();
         self.entity.push(block);
@@ -85,7 +88,7 @@ impl Blockchain {
 
     pub fn difficulty_checker(&self) -> String {
         let mut start_with = "".to_string();
-        for _i in 0..self.difficulty {
+        for _ in 0..self.current_difficulty {
             start_with.push_str("0");
         }
         start_with
@@ -104,6 +107,7 @@ mod tests {
         assert_eq!(blockchain.entity[0].transactions.len(), 0);
         assert_eq!(blockchain.entity[0].hash, "genesis block".to_string());
         assert_eq!(blockchain.entity[0].previous_hash, "this is start".to_string());
+        assert_eq!(blockchain.entity[0].difficulty, 0);
     }
 
     #[test]

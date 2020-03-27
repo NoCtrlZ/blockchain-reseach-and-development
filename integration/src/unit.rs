@@ -41,3 +41,11 @@ pub fn stream_to_string(mut stream: TcpStream) -> String {
     stream.read_to_end(&mut buffer).expect("fail to read stream to end");
     String::from_utf8_lossy(&buffer[..]).trim_matches(char::from(0)).to_string()
 }
+
+pub fn difficulty_checker(difficulty: u8) -> String {
+    let mut start_with = "".to_string();
+    for _i in 0..difficulty {
+        start_with.push_str("0");
+    }
+    start_with
+}

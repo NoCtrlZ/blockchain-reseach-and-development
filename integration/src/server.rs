@@ -9,6 +9,7 @@ use crate::blockchain::{Blockchain, Block};
 use crate::p2p::{Network, Add, NetworkInfo, CurrentState};
 use crate::response::{Response, PREFIX};
 use crate::utxo::{Utxo, Transaction};
+use crate::unit::{difficulty_checker, sha256_hash};
 
 pub struct Server {
     router: Router,
@@ -35,7 +36,7 @@ impl Server {
             blockchain: Blockchain {
                 entity: blocks.clone(),
                 transactions: transactions,
-                difficulty: default_difficulty,
+                current_difficulty: default_difficulty,
             },
             network: network,
             wallet: wallet,
@@ -149,11 +150,23 @@ impl Server {
 
     pub fn add_block(&mut self, req: Request) -> Response {
         let block: Block = serde_json::from_str(&req.body).expect("fail to convert block to json");
-        self.blockchain.entity.push(block.clone());
-        self.blockchain.transactions.clear();
-        Response {
-            prefix: PREFIX.to_string(),
-            body: json!(block).to_string()
+        let start_with = difficulty_checker(block.difficulty);
+        let hash = sha256_hash(&block.hash, &block.previous_hash, &block.nonce.to_string());
+        match start_with == &hash[..block.difficulty as usize] {
+            true => {
+                self.blockchain.entity.push(block.clone());
+                self.blockchain.transactions.clear();
+                return Response {
+                    prefix: PREFIX.to_string(),
+                    body: json!(block).to_string()
+                };
+            },
+            false => {
+                return Response {
+                    prefix: PREFIX.to_string(),
+                    body: "block is invalid".to_string()
+                };
+            }
         }
     }
 
