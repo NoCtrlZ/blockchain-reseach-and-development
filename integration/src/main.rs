@@ -21,10 +21,12 @@ fn set_router() -> Router {
     let mut router = Router::new();
     router.get("/", Server::get_all);
     router.get("/nodes", Server::get_nodes);
+    router.get("/check", Server::get_node_info);
     router.get("/balance", Server::balance);
     router.get("/network", Server::get_network);
     router.get("/blockchain", Server::get_blockchain);
     router.get("/create_new_block", Server::create_new_block);
+    router.get("/consensus", Server::consensus);
     router.post("/add", Server::add);
     router.post("/join", Server::join);
     router.post("/add_block", Server::add_block);

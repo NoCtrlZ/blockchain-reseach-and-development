@@ -1,6 +1,7 @@
 use std::net::TcpListener;
 use std::net::TcpStream;
 use serde_json::json;
+use serde::{Deserialize, Serialize};
 use crate::lamport::Wallet;
 use crate::request::Request;
 use crate::router::{Router, Handler};
@@ -15,6 +16,12 @@ pub struct Server {
     network: Network,
     wallet: Wallet,
     utxo: Utxo
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct NodeInfo {
+    pub block_length: usize,
+    pub endpoint: String
 }
 
 impl Server {
@@ -86,6 +93,17 @@ impl Server {
         }
     }
 
+    pub fn get_node_info(&mut self, req: Request) -> Response {
+        let node_info = NodeInfo {
+            block_length: self.blockchain.entity.len(),
+            endpoint: self.network.endpoint
+        };
+        Response {
+            prefix: PREFIX.to_string(),
+            body: json!(node_info).to_string()
+        }
+    }
+
     pub fn get_network(&mut self, req: Request) -> Response {
         let whole_network = self.network.network_json();
         Response {
@@ -105,6 +123,10 @@ impl Server {
             prefix: PREFIX.to_string(),
             body: json!(block).to_string()
         }
+    }
+
+    pub fn consensus(&mut self, req: Request) -> Response {
+        let longest_chain_node = self.network.consensus_broadcast(self.blockchain.entity.len(), &self.network.endpoint);
     }
 
     pub fn add_block(&mut self, req: Request) -> Response {

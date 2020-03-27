@@ -9,6 +9,7 @@ use crate::response::Response;
 use crate::request::Request;
 use crate::unit::{is_open, random_port, stream_to_string};
 use crate::utxo::Transaction;
+use crate::server::NodeInfo;
 
 const PREFIX: &str = "HTTP/1.1\r\nHost: localhost:5862\r\nUser-Agent: curl/7.64.1\r\nAccept: */*";
 
@@ -97,6 +98,19 @@ impl Network {
         }
     }
 
+    pub fn consensus_broadcast(&self, length: usize, endpoint: &str) -> String {
+        let mut longest_chain_node = endpoint;
+        let mut max_block_length = length;
+        for i in 0..self.nodes.len() {
+            let (length, endpoint) = get_chain_length(&self.nodes[i]);
+            if length > max_block_length {
+                longest_chain_node = &endpoint;
+                max_block_length = length;
+            }
+        }
+        longest_chain_node.to_string()
+    }
+
     pub fn network_json(&self) -> String {
         let network = json!(&self);
         network.to_string()
@@ -163,4 +177,15 @@ fn add_transaction_to_blockchain(endpoint: &str, transaction: Transaction) -> Re
         body: json!(transaction).to_string()
     };
     throw_request(endpoint, request)
+}
+
+fn get_chain_length(endpoint: &str) -> (usize, String) {
+    let request = Throw {
+        method: method::GET.to_string(),
+        path: "/check".to_string(),
+        body: "".to_string()
+    };
+    let request = throw_request(endpoint, request);
+    let body: NodeInfo = serde_json::from_str(&request.body).expect("fail to pase node info to json");
+    (body.block_length, body.endpoint.to_string())
 }
