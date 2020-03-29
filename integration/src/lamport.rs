@@ -3,6 +3,7 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
+use crate::unit::to_binary;
 use base64::encode;
 
 #[derive(Debug, Clone)]
@@ -70,6 +71,10 @@ impl Wallet {
         address.push_str(&self.address.clone());
         address
     }
+
+    pub fn string_public_key(&self) -> String {
+        public_key_to_string(self.public_key.pairs.clone())
+    }
 }
 
 impl PublicKey {
@@ -117,28 +122,6 @@ fn text_to_binary(hashed_text: &str) -> String {
     hashed_text.chars().map(to_binary).collect()
 }
 
-fn to_binary(c: char) -> String {
-    match c {
-        '0' => "0000".to_string(),
-        '1' => "0001".to_string(),
-        '2' => "0010".to_string(),
-        '3' => "0011".to_string(),
-        '4' => "0100".to_string(),
-        '5' => "0101".to_string(),
-        '6' => "0110".to_string(),
-        '7' => "0111".to_string(),
-        '8' => "1000".to_string(),
-        '9' => "1001".to_string(),
-        'a' => "1010".to_string(),
-        'b' => "1011".to_string(),
-        'c' => "1100".to_string(),
-        'd' => "1101".to_string(),
-        'e' => "1110".to_string(),
-        'f' => "1111".to_string(),
-        _ => "".to_string(),
-    }
-}
-
 fn from_str(value: &str) -> U256 {
     use rustc_hex::FromHex;
 
@@ -157,6 +140,15 @@ fn compare_with_pub(signature: U256, pub_key: U256) -> bool {
 
 fn uint256_to_string(adam: &U256, eve: &U256) -> String {
     format!("{}{}", adam.to_string(), eve.to_string())
+}
+
+fn public_key_to_string(public_key: Vec<(U256, U256)>) -> String {
+    let mut string_key = "".to_string();
+    for i in 0..PRIVATE_KEY_LENGT {
+        string_key.push_str(&encode(public_key[i].0.to_hex()));
+        string_key.push_str(&encode(public_key[i].1.to_hex()));
+    }
+    string_key
 }
 
 #[cfg(test)]
