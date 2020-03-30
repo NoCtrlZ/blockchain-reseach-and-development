@@ -178,6 +178,23 @@ pub fn add_zero(binary: &str) -> String {
     format!("{}{}", prefix, binary)
 }
 
+pub fn binary_to_base64(binary: &str) -> String {
+    let mut base64 = "".to_string();
+    let iter_num = binary.len() / 6;
+    for i in 0..iter_num {
+        if i != iter_num - 1 {
+            println!("there");
+            let piece: String = binary[6 * i..(6 * i) + 6].to_string();
+            base64.push_str(&to_base64(piece.as_str()));
+        } else {
+            println!("this");
+            let piece: String = binary[6 * i..(6 * i) + 4].to_string();
+            base64.push_str(&to_base64(piece.as_str()));
+        }
+    }
+    base64
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -186,8 +203,15 @@ mod tests {
     fn test_add_zero() {
         let binary = "101010100101001010010101001010100101010010101001010100101001010010101010101010";
         let added_zero = add_zero(binary);
-        println!("{:?}", added_zero);
         assert_eq!(added_zero.len(), 256);
+    }
+
+    #[test]
+    fn test_binary_to_base64() {
+        let binary = "101010100101001010010101001010100101010010101001010100101001010010101010101010";
+        let added_zero = add_zero(binary);
+        let base64 = binary_to_base64(&added_zero);
+        println!("{:?}", base64);
     }
 
     #[test]
