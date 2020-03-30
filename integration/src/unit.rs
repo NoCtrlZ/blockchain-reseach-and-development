@@ -175,7 +175,11 @@ mod tests {
 
     #[test]
     fn test_to_base64() {
-        let base64 = to_base64("011001");
-        assert_eq!(base64, "Z");
+        let Z = to_base64("011001");
+        let four = to_base64("111000");
+        let with_postfix = to_base64("10110");
+        assert_eq!(Z, "Z");
+        assert_eq!(four, "4");
+        assert_eq!(with_postfix, "W=");
     }
 }
