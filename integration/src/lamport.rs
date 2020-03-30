@@ -38,7 +38,6 @@ impl Wallet {
             public_key_string.push_str(&bigint_to_base64(eve));
             prv_pairs.push((adam, eve));
         }
-        println!("{:?}", public_key_string);
         let address = sha256_hash(&public_key_string).to_hex();
         Wallet {
             private_key: PrivateKey {

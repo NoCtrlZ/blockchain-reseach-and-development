@@ -29,6 +29,37 @@ pub fn to_binary(c: char) -> String {
     }
 }
 
+pub fn binary_to_hex(binary: &str) -> String {
+    let mut hex = "".to_string();
+    let length = binary.len() / 4;
+    for i in 0..length {
+        hex.push_str(&binary_hexize(&binary[4 * i..(4 * i) + 4]));
+    }
+    hex
+}
+
+fn binary_hexize(binary: &str) -> String {
+    match binary {
+        "0000" => "0".to_string(),
+        "0001" => "1".to_string(),
+        "0010" => "2".to_string(),
+        "0011" => "3".to_string(),
+        "0100" => "4".to_string(),
+        "0101" => "5".to_string(),
+        "0110" => "6".to_string(),
+        "0111" => "7".to_string(),
+        "1000" => "8".to_string(),
+        "1001" => "9".to_string(),
+        "1010" => "a".to_string(),
+        "1011" => "b".to_string(),
+        "1100" => "c".to_string(),
+        "1101" => "d".to_string(),
+        "1110" => "e".to_string(),
+        "1111" => "f".to_string(),
+        _ => "".to_string(),
+    }
+}
+
 pub fn binary_to_base64(binary: &str) -> String {
     let mut base64 = "".to_string();
     let iter_num = (binary.len() / 6) + 1;
@@ -42,7 +73,7 @@ pub fn binary_to_base64(binary: &str) -> String {
     base64
 }
 
-pub fn to_base64(binary: &str) -> String {
+fn to_base64(binary: &str) -> String {
     let mut target = "".to_string();
     let length = binary.len();
     let head = 6 - length;
@@ -124,7 +155,7 @@ pub fn to_base64(binary: &str) -> String {
     mark
 }
 
-pub fn base64_to_binary(base64: &str) -> String {
+fn base64_to_binary(base64: &str) -> String {
     if base64.len() > 43 {panic!("give me single string");}
     let mut binary = "".to_string();
     for i in 0..base64.len() {
@@ -207,6 +238,14 @@ pub fn base64_to_binary(base64: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_binary_to_hex() {
+        let base64 = "CpESkZ0G4GgV+qRV9dO7MteCsOWy3TMSkVaJvXhc8WA";
+        let binary = base64_to_binary(base64);
+        let hex = binary_to_hex(&binary);
+        assert_eq!(hex.len(), 64);
+    }
 
     #[test]
     fn test_base64_to_binary() {

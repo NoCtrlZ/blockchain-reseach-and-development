@@ -27,7 +27,7 @@ pub fn sha256_hash(previous_block_hash: &str, current_block_hash: &str, nonce: &
 
 pub fn random_port() -> String {
     let mut rng = rand::thread_rng();
-    rng.gen_range(1024, 9000).to_string()
+    rng.gen_range(1025, 9000).to_string()
 }
 
 pub fn is_open(endpoint: &str) -> bool {
