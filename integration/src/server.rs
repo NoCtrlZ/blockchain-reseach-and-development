@@ -29,8 +29,6 @@ impl Server {
     pub fn new(router: Router) -> Server {
         let default_difficulty = 3;
         let wallet = Wallet::new();
-        let string_key = wallet.string_public_key();
-        println!("string key is {:?}", string_key);
         let (network, blocks, transactions) = Network::new();
         println!("the address is {:?}", &wallet.get_address());
         if !block_is_valid(blocks.clone()) {panic!("blockchain is invalid")}

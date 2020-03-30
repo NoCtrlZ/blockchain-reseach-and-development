@@ -3,8 +3,7 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
-use crate::unit::{add_zero, to_binary};
-use base64::encode;
+use crate::unit::{add_zero, to_binary, binary_to_base64};
 
 #[derive(Debug, Clone)]
 pub struct Wallet {
@@ -34,9 +33,11 @@ impl Wallet {
         for _i in 0..PRIVATE_KEY_LENGT {
             let (adam, eve) = prv_key_pair();
             pub_pairs.push(pub_key_pair(&adam, &eve));
-            public_key_string.push_str(&encode(uint256_to_string(&adam, &eve).as_bytes()));
+            public_key_string.push_str(&bigint_to_base64(adam));
+            public_key_string.push_str(&bigint_to_base64(eve));
             prv_pairs.push((adam, eve));
         }
+        println!("{:?}", public_key_string);
         let address = sha256_hash(&public_key_string).to_hex();
         Wallet {
             private_key: PrivateKey {
@@ -70,10 +71,6 @@ impl Wallet {
         let mut address = "0x".to_string();
         address.push_str(&self.address.clone());
         address
-    }
-
-    pub fn string_public_key(&self) -> String {
-        public_key_to_string(self.public_key.pairs.clone())
     }
 }
 
@@ -142,20 +139,11 @@ fn uint256_to_string(adam: &U256, eve: &U256) -> String {
     format!("{}{}", adam.to_string(), eve.to_string())
 }
 
-fn public_key_to_string(public_key: Vec<(U256, U256)>) -> String {
-    let mut string_key = "".to_string();
-    for i in 0..PRIVATE_KEY_LENGT {
-        string_key.push_str(&encode(public_key[i].0.to_hex()));
-        string_key.push_str(&encode(public_key[i].1.to_hex()));
-    }
-    string_key
-}
-
 fn bigint_to_base64(target: U256) -> String {
     let hex = target.to_hex();
     let binary: String = hex.chars().map(to_binary).collect();
     let binary_256 = add_zero(&binary);
-    "yo".to_string()
+    binary_to_base64(&binary_256)
 }
 
 #[cfg(test)]

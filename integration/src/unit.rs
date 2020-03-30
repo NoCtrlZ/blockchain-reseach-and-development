@@ -163,9 +163,6 @@ pub fn to_base64(binary: &str) -> String {
         "111111" => "/".to_string(),
         _ => panic!("fail to convert"),
     };
-    for i in 0..head {
-        mark.push_str("=");
-    }
     mark
 }
 
@@ -217,6 +214,6 @@ mod tests {
         let with_postfix = to_base64("10110");
         assert_eq!(Z, "Z");
         assert_eq!(four, "4");
-        assert_eq!(with_postfix, "W=");
+        assert_eq!(with_postfix, "W");
     }
 }
