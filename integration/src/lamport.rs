@@ -3,7 +3,7 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
-use crate::unit::{add_zero, to_binary, binary_to_base64};
+use crate::base64::{add_zero, to_binary, binary_to_base64};
 
 #[derive(Debug, Clone)]
 pub struct Wallet {

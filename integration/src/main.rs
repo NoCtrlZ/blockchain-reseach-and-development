@@ -8,11 +8,11 @@ mod server;
 mod response;
 mod lamport;
 mod utxo;
+mod base64;
 
 extern crate rand;
 extern crate bigint;
 extern crate rustc_hex;
-extern crate base64;
 
 use server::Server;
 use router::Router;
