@@ -3,7 +3,7 @@ use rand::Rng;
 use crypto::sha2::Sha256;
 use crypto::digest::Digest;
 use std::iter::repeat;
-use crate::unit::to_binary;
+use crate::unit::{add_zero, to_binary};
 use base64::encode;
 
 #[derive(Debug, Clone)]
@@ -149,6 +149,13 @@ fn public_key_to_string(public_key: Vec<(U256, U256)>) -> String {
         string_key.push_str(&encode(public_key[i].1.to_hex()));
     }
     string_key
+}
+
+fn bigint_to_base64(target: U256) -> String {
+    let hex = target.to_hex();
+    let binary: String = hex.chars().map(to_binary).collect();
+    let binary_256 = add_zero(&binary);
+    "yo".to_string()
 }
 
 #[cfg(test)]

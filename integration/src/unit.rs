@@ -169,9 +169,26 @@ pub fn to_base64(binary: &str) -> String {
     mark
 }
 
+pub fn add_zero(binary: &str) -> String {
+    let zero_num = 256 - binary.len();
+    let mut prefix = "".to_string();
+    for i in 0..zero_num {
+        prefix.push_str("0");
+    }
+    format!("{}{}", prefix, binary)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_add_zero() {
+        let binary = "101010100101001010010101001010100101010010101001010100101001010010101010101010";
+        let added_zero = add_zero(binary);
+        println!("{:?}", added_zero);
+        assert_eq!(added_zero.len(), 256);
+    }
 
     #[test]
     fn test_to_base64() {
