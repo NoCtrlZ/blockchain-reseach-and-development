@@ -182,15 +182,11 @@ pub fn binary_to_base64(binary: &str) -> String {
     let mut base64 = "".to_string();
     let iter_num = binary.len() / 6;
     for i in 0..iter_num {
-        if i != iter_num - 1 {
-            println!("there");
-            let piece: String = binary[6 * i..(6 * i) + 6].to_string();
-            base64.push_str(&to_base64(piece.as_str()));
-        } else {
-            println!("this");
-            let piece: String = binary[6 * i..(6 * i) + 4].to_string();
-            base64.push_str(&to_base64(piece.as_str()));
-        }
+        let piece: String = match i != iter_num - 1 {
+            true => binary[6 * i..(6 * i) + 6].to_string(),
+            false => binary[6 * i..(6 * i) + 4].to_string(),
+        };
+        base64.push_str(&to_base64(piece.as_str()));
     }
     base64
 }
