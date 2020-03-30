@@ -166,6 +166,78 @@ pub fn to_base64(binary: &str) -> String {
     mark
 }
 
+pub fn base64_to_binary(base64: &str) -> String {
+    if base64.len() > 1 {panic!("give me single string");}
+    let mut mark = match base64 {
+        "A" => "000000".to_string(),
+        "B" => "000001".to_string(),
+        "C" => "000010".to_string(),
+        "D" => "000011".to_string(),
+        "E" => "000100".to_string(),
+        "F" => "000101".to_string(),
+        "G" => "000110".to_string(),
+        "H" => "000111".to_string(),
+        "I" => "001000".to_string(),
+        "J" => "001001".to_string(),
+        "K" => "001010".to_string(),
+        "L" => "001011".to_string(),
+        "M" => "001100".to_string(),
+        "N" => "001101".to_string(),
+        "O" => "001110".to_string(),
+        "P" => "001111".to_string(),
+        "Q" => "010000".to_string(),
+        "R" => "010001".to_string(),
+        "S" => "010010".to_string(),
+        "T" => "010011".to_string(),
+        "U" => "010100".to_string(),
+        "V" => "010101".to_string(),
+        "W" => "010110".to_string(),
+        "X" => "010111".to_string(),
+        "Y" => "011000".to_string(),
+        "Z" => "011001".to_string(),
+        "a" => "011010".to_string(),
+        "b" => "011011".to_string(),
+        "c" => "011100".to_string(),
+        "d" => "011101".to_string(),
+        "e" => "011110".to_string(),
+        "f" => "011111".to_string(),
+        "g" => "100000".to_string(),
+        "h" => "100001".to_string(),
+        "i" => "100010".to_string(),
+        "j" => "100011".to_string(),
+        "k" => "100100".to_string(),
+        "l" => "100101".to_string(),
+        "m" => "100110".to_string(),
+        "n" => "100111".to_string(),
+        "o" => "101000".to_string(),
+        "p" => "101001".to_string(),
+        "q" => "101010".to_string(),
+        "r" => "101011".to_string(),
+        "s" => "101100".to_string(),
+        "t" => "101101".to_string(),
+        "u" => "101110".to_string(),
+        "v" => "101111".to_string(),
+        "w" => "110000".to_string(),
+        "x" => "110001".to_string(),
+        "y" => "110010".to_string(),
+        "z" => "110011".to_string(),
+        "0" => "110100".to_string(),
+        "1" => "110101".to_string(),
+        "2" => "110110".to_string(),
+        "3" => "110111".to_string(),
+        "4" => "111000".to_string(),
+        "5" => "111001".to_string(),
+        "6" => "111010".to_string(),
+        "7" => "111011".to_string(),
+        "8" => "111100".to_string(),
+        "9" => "111101".to_string(),
+        "+" => "111110".to_string(),
+        "/" => "111111".to_string(),
+        _ => panic!("fail to convert"),
+    };
+    mark
+}
+
 pub fn add_zero(binary: &str) -> String {
     let zero_num = 256 - binary.len();
     let mut prefix = "".to_string();
@@ -191,6 +263,20 @@ pub fn binary_to_base64(binary: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_base64_to_binary() {
+        let base64 = "W";
+        let binary = base64_to_binary(base64);
+        assert_eq!(binary, "010110");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_base64_panic() {
+        let base64 = "Wi";
+        let binary = base64_to_binary(base64);
+    }
 
     #[test]
     fn test_add_zero() {

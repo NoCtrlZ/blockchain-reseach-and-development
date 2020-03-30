@@ -9,7 +9,8 @@ use crate::unit::{add_zero, to_binary, binary_to_base64};
 pub struct Wallet {
     pub private_key: PrivateKey,
     pub public_key: PublicKey,
-    pub address: String
+    pub address: String,
+    pub public_key_test: String
 }
 
 #[derive(Debug, Clone)]
@@ -46,7 +47,8 @@ impl Wallet {
             public_key: PublicKey {
                 pairs: pub_pairs
             },
-            address: address
+            address: address,
+            public_key_test: public_key_string
         }
     }
 
